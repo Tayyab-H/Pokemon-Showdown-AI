@@ -1,0 +1,12 @@
+import numpy as np
+import torch
+xy = np.genfromtxt("dataset.csv", delimiter=',', dtype=np.float32)
+length = len(xy)
+x_data = torch.from_numpy(xy[0:, 1:]).reshape(-1, 2, 6)
+y_data = torch.from_numpy(xy[0:, 0])
+if y_data[1] == 1.0:
+    y_data = np.array([1,0])
+else:
+    y_data = np.array([0, 1])
+print(y_data)
+print(x_data[0])
