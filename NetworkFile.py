@@ -28,7 +28,7 @@ class Model(nn.Module):
 class Test():
         model = Model()
         optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
-        dataset = ReplaysDataSet("dataset.csv")
+        dataset = ReplaysDataSet("Ndataset.csv")
         trainLoader = DataLoader(dataset=dataset, batch_size=200, shuffle=True)
         batch = next(iter(trainLoader))
         criterion = nn.BCELoss()
@@ -50,7 +50,7 @@ class Test():
             accuracy = totalCorrect / 2000
             plt.scatter(epoch, accuracy, s=10, color='g')
         plt.show()
-        dataset = ReplaysDataSet("test.csv")
+        dataset = ReplaysDataSet("Ntest.csv")
         trainLoader = DataLoader(dataset=dataset, batch_size=495, shuffle=True)
         totalLoss = 0
         totalCorrect = 0
