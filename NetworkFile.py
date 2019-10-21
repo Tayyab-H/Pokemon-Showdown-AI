@@ -29,7 +29,7 @@ class Test():
         model = Model()
         optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
         dataset = ReplaysDataSet("dataset.csv")
-        trainLoader = DataLoader(dataset=dataset, batch_size=50, shuffle=True)
+        trainLoader = DataLoader(dataset=dataset, batch_size=200, shuffle=True)
         batch = next(iter(trainLoader))
         criterion = nn.BCELoss()
         for epoch in range(500):
