@@ -29,10 +29,10 @@ class Test():
         model = Model()
         optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
         dataset = ReplaysDataSet("Ndataset.csv")
-        trainLoader = DataLoader(dataset=dataset, batch_size=200, shuffle=True)
+        trainLoader = DataLoader(dataset=dataset, batch_size=150, shuffle=True)
         batch = next(iter(trainLoader))
         criterion = nn.BCELoss()
-        for epoch in range(500):
+        for epoch in range(1500):
             totalLoss = 0
             totalCorrect = 0
             for batch in trainLoader:
@@ -47,17 +47,16 @@ class Test():
                 totalCorrect += model.get_num_correct(prediction, label)
             print("Total loss : " , totalLoss)
             print("total correct : ", totalCorrect)
-            accuracy = totalCorrect / 2000
+            accuracy = totalCorrect / 3243
             plt.scatter(epoch, accuracy, s=10, color='g')
         plt.show()
         dataset = ReplaysDataSet("Ntest.csv")
-        trainLoader = DataLoader(dataset=dataset, batch_size=495, shuffle=True)
+        trainLoader = DataLoader(dataset=dataset, batch_size=500, shuffle=True)
         totalLoss = 0
         totalCorrect = 0
         for batch in trainLoader:
             data, label = batch
             prediction = model(data)
-            print(prediction.round().squeeze())
             #print(label)
 
             loss = criterion(prediction.squeeze(), label)
@@ -65,9 +64,8 @@ class Test():
 
             loss.backward()
             #optimiser.step()
-
             totalLoss += loss.item()
             print("Testing total loss is : ", totalLoss)
             totalCorrect += model.get_num_correct(prediction, label)
             print("Testing total correct is : ", totalCorrect)
-            print("Accuracy on testing set is ", ((totalCorrect/495)*100), "%")
+            print("Accuracy on testing set is ", ((totalCorrect/500)*100), "%")

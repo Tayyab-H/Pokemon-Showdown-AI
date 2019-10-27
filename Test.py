@@ -65,7 +65,7 @@ def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-994429357"):
     towrite = []
     towrite = [label] + dex1 + dex2
     print(towrite)
-    with open("dataset2.csv", "a", newline="") as f:
+    with open("dataset3.csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(towrite)
 
@@ -86,7 +86,7 @@ with open("Dex.csv", "r") as f:
         pokemonList.append(pokemonName)
 
 i = 0
-file = "Replays2.html"
+file = "Replays3.html"
 f = open(file, 'r', encoding='cp850')
 soup = BeautifulSoup(f, 'lxml')
 for link in soup.findAll('a'):
