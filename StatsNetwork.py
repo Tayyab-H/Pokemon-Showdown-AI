@@ -8,10 +8,10 @@ import torch
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
-        self.l1 = torch.nn.Linear(12,64)
-        self.l2 = torch.nn.Linear(64, 128)
-        self.l3 = torch.nn.Linear(128, 32)
-        self.l4 = torch.nn.Linear(32, 1)
+        self.l1 = torch.nn.Linear(12,32)
+        self.l2 = torch.nn.Linear(32, 12)
+        self.l3 = torch.nn.Linear(12, 14)
+        self.l4 = torch.nn.Linear(14, 1)
 
     def forward(self, t):
 
@@ -27,12 +27,12 @@ class Model(nn.Module):
 
 class Test():
         model = Model()
-        optimiser = torch.optim.Adam(model.parameters(), lr=0.0001)
-        dataset = ReplaysDataSet("dataset.csv")
+        optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
+        dataset = ReplaysDataSet("statsDataset.csv")
         trainLoader = DataLoader(dataset=dataset, batch_size=150, shuffle=True)
         batch = next(iter(trainLoader))
         criterion = nn.BCELoss()
-        for epoch in range(1000):
+        for epoch in range(1500):
             totalLoss = 0
             totalCorrect = 0
             for batch in trainLoader:
@@ -47,10 +47,10 @@ class Test():
                 totalCorrect += model.get_num_correct(prediction, label)
             print("Total loss : " , totalLoss)
             print("total correct : ", totalCorrect)
-            accuracy = totalCorrect / 5500
+            accuracy = totalCorrect / 3243
             plt.scatter(epoch, accuracy, s=10, color='g')
         plt.show()
-        dataset = ReplaysDataSet("test.csv")
+        dataset = ReplaysDataSet("statsTest.csv")
         trainLoader = DataLoader(dataset=dataset, batch_size=500, shuffle=True)
         totalLoss = 0
         totalCorrect = 0
@@ -68,4 +68,4 @@ class Test():
             print("Testing total loss is : ", totalLoss)
             totalCorrect += model.get_num_correct(prediction, label)
             print("Testing total correct is : ", totalCorrect)
-            print("Accuracy on testing set is ", ((totalCorrect/743)*100), "%")
+            print("Accuracy on testing set is ", ((totalCorrect/500)*100), "%")

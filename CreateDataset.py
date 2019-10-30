@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 
 
-def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-994429357"):
+def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-999570770"):
     print(link)
     result = requests.get(link)
     src = result.content
@@ -65,10 +65,9 @@ def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-994429357"):
     towrite = []
     towrite = [label] + dex1 + dex2
     print(towrite)
-    with open("dataset3.csv", "a", newline="") as f:
+    with open("dataset5.csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(towrite)
-
 
 
 
@@ -86,7 +85,7 @@ with open("Dex.csv", "r") as f:
         pokemonList.append(pokemonName)
 
 i = 0
-file = "Replays3.html"
+file = "Replays5.html"
 f = open(file, 'r', encoding='cp850')
 soup = BeautifulSoup(f, 'lxml')
 for link in soup.findAll('a'):

@@ -1,33 +1,36 @@
 from bs4 import BeautifulSoup as bs
 import requests
 import csv
-
+import os
+import sys
 
 class Utils:
     def statsFromId(id):
-        with open('stats.csv', "r") as f:
+        with open(os.path.join(sys.path[0], "stats.csv"), "r") as f:
             file = csv.reader(f, delimiter=",")
             stats = []
+            if id == 0 or id == str(0):
+                stats = [0, 0, 0, 0, 0, 0]
+                return stats
             for line in file:
                 if line[0] == str(id):
-                    stats.append(line[2])
+                    stats.append(int(line[2]))
+            return stats
+
 
     def dexToId(dex):
-        with open("dex.csv", "r") as f:
+        with open(os.path.join(sys.path[0], "dex.csv") ,"r") as f:
             file = csv.reader(f, delimiter=",")
+            if dex == 0 or dex == str(0):
+                return 0
             for line in file:
                 if line[2] == str(dex):
-                    return line[0]
+                    return int(line[0])
 
-        return None
 
     def IdToDex(id):
-        with open("dex.csv", "r") as f:
+        with open(os.path.join(sys.path[0], "dex.csv"),"r") as f:
             file = csv.reader(f, delimiter=",")
             for line in file:
                 if line[0] == str(id):
-                    return line[2]
-
-        return None
-
-
+                    return int(line[2])
