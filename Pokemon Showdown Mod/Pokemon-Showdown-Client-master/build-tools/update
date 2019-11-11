@@ -1,0 +1,139 @@
+#!/usr/bin/env node
+
+/**
+ * This script parses index.html and sets the version query string of each
+ * resource to be the MD5 hash of that resource.
+ * It also updates news and the learnsets-g6.js file.
+ */
+
+"use strict";
+
+const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
+const child_process = require('child_process');
+
+const thisDir = __dirname;
+const rootDir = path.resolve(thisDir, '..');
+process.chdir(rootDir);
+
+/*********************************************************
+ * Update version number
+ *********************************************************/
+
+process.stdout.write("Updating version... ");
+
+let version = require('../package.json').version;
+try {
+	let commit = child_process.execSync('git rev-parse HEAD', {
+		stdio: ['ignore', 'pipe', 'ignore'],
+	});
+	const head = ('' + commit).trim();
+	commit = child_process.execSync('git merge-base origin/master HEAD', {
+		stdio: ['ignore', 'pipe', 'ignore'],
+	});
+	const origin = ('' + commit).trim();
+	version += ` (${head.slice(0, 8)}${head !== origin ? `/${origin.slice(0, 8)}` : ''})`;
+} catch (e) {}
+
+let configBuf = fs.readFileSync('config/config.js', {encoding: 'utf8'});
+configBuf = configBuf.replace(/\/\* version \*\/[^;\n]*;/, `/* version */ Config.version = ${JSON.stringify(version)};`);
+
+fs.writeFileSync('config/config.js', configBuf);
+console.log("DONE");
+
+/*********************************************************
+ * Compile TS files
+ *********************************************************/
+
+let ignoreGraphics = ' --ignore "src/battle-animations.js","src/battle-animations-moves.js"';
+if (process.argv[2] === 'full') {
+	ignoreGraphics = '';
+} else {
+	try {
+		fs.statSync('data/graphics.js');
+		// graphics.js exists, recompile it
+		ignoreGraphics = '';
+	} catch (e) {}
+}
+
+child_process.execSync(`node build-tools/babel-cli/bin/babel.js src --out-dir js --extensions ".ts,.tsx" --incremental${ignoreGraphics}`);
+
+fs.writeFileSync(
+	'js/battledata.js',
+	fs.readFileSync('js/battle-dex.js') + '\n\n' +
+		fs.readFileSync('js/battle-dex-data.js') + '\n\n' +
+		fs.readFileSync('js/battle-log.js') + '\n\n' +
+		fs.readFileSync('src/battle-log-misc.js') +
+		fs.readFileSync('data/text.js') + '\n\n' +
+		fs.readFileSync('data/text-afd.js') + '\n\n' +
+		fs.readFileSync('js/battle-text-parser.js')
+);
+
+if (!ignoreGraphics) {
+	fs.writeFileSync(
+		'data/graphics.js',
+		fs.readFileSync('js/battle-animations.js') + '\n\n' +
+			fs.readFileSync('js/battle-animations-moves.js')
+	);
+}
+
+/*********************************************************
+ * Update cachebuster and News
+ *********************************************************/
+
+function updateIndex() {
+	// add hashes to js and css files
+	process.stdout.write("Updating hashes... ");
+	let indexContents = fs.readFileSync('index.template.html', {encoding: 'utf8'});
+	indexContents = indexContents.replace(/(src|href)="\/(.*?)\?[a-z0-9]*?"/g, function (a, b, c) {
+		let hash = Math.random(); // just in case creating the hash fails
+		try {
+			const filename = c.replace('/play.pokemonshowdown.com/', '');
+			const fstr = fs.readFileSync(filename, {encoding: 'utf8'});
+			hash = crypto.createHash('md5').update(fstr).digest('hex').substr(0, 8);
+		} catch (e) {}
+
+		return b + '="/' + c + '?' + hash + '"';
+	});
+	let indexContents2 = fs.readFileSync('preactalpha.template.html', {encoding: 'utf8'});
+	indexContents2 = indexContents2.replace(/(src|href)="\/(.*?)\?[a-z0-9]*?"/g, function (a, b, c) {
+		let hash = Math.random(); // just in case creating the hash fails
+		try {
+			const filename = c.replace('/play.pokemonshowdown.com/', '');
+			const fstr = fs.readFileSync(filename, {encoding: 'utf8'});
+			hash = crypto.createHash('md5').update(fstr).digest('hex').substr(0, 8);
+		} catch (e) {}
+
+		return b + '="/' + c + '?' + hash + '"';
+	});
+	console.log("DONE");
+
+	// add news, only if it's actually likely to exist
+	if (__dirname.endsWith('play.pokemonshowdown.com/build-tools')) {
+		process.stdout.write("Updating news... ");
+		child_process.exec('php ' + path.resolve(thisDir, 'news-data.php'), function (error, stdout, stderr) {
+			let newsData = [0, '[failed to retrieve news]'];
+			if (!error && !stderr) {
+				try {
+					newsData = JSON.parse(stdout);
+				} catch (e) {
+					console.log("git hook failed to retrieve news (parsing JSON failed):\n" + e.stack);
+				}
+			} else {
+				console.log("git hook failed to retrieve news (exec command failed):\n" + (error + stderr + stdout));
+			}
+
+			indexContents = indexContents.replace(/<!-- newsid -->/g, newsData[0]);
+			indexContents = indexContents.replace(/<!-- news -->/g, newsData[1]);
+			console.log("DONE");
+
+			process.stdout.write("Writing new `index.html` file... ");
+			fs.writeFileSync('index.html', indexContents);
+			fs.writeFileSync('preactalpha.html', indexContents2);
+			console.log("DONE");
+		});
+	}
+}
+
+updateIndex();

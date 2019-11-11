@@ -2,23 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="485deab9-d58c-4e9a-863d-4720949b0a56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Replays4.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Replays5.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StatsDatasetCreator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StatsNetwork.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset4.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dataset5.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/statsDataset.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/statsTest.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/testing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CreateDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/CreateDataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DataSetLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataSetLoader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/NetworkFile.py" beforeDir="false" afterPath="$PROJECT_DIR$/NetworkFile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataset.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dataset.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dex.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dex.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/test.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StatsDatasetCreator.py" beforeDir="false" afterPath="$PROJECT_DIR$/StatsDatasetCreator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StatsNetwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/StatsNetwork.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/statsDataset.csv___jb_old___" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/statsDataset.csv___jb_tmp___" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -77,7 +67,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.StatsDatasetCreator (1)">
+  <component name="RunManager" selected="Python.StatsNetwork">
     <configuration name="DataSetLoader" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="untitled" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -190,11 +180,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.StatsDatasetCreator (1)" />
+        <item itemvalue="Python.StatsNetwork" />
         <item itemvalue="Python.testing" />
         <item itemvalue="Python.DataSetLoader" />
-        <item itemvalue="Python.StatsNetwork" />
         <item itemvalue="Python.NetworkFile" />
+        <item itemvalue="Python.StatsDatasetCreator (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -226,12 +216,23 @@
       <workItem from="1572265976276" duration="1397000" />
       <workItem from="1572354645645" duration="4074000" />
       <workItem from="1572363087387" duration="4849000" />
-      <workItem from="1572435403119" duration="605000" />
+      <workItem from="1572435403119" duration="606000" />
+      <workItem from="1572713285899" duration="2107000" />
+      <workItem from="1572790608367" duration="5644000" />
+      <workItem from="1572908614804" duration="630000" />
+      <workItem from="1572961374296" duration="4124000" />
+      <workItem from="1572968846895" duration="5562000" />
+      <workItem from="1572979565110" duration="601000" />
+      <workItem from="1573386042298" duration="4881000" />
+      <workItem from="1573397564696" duration="2327000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.csv" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -248,14 +249,14 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/untitled$pythonTesting.coverage" NAME="pythonTesting Coverage Results" MODIFIED="1571607861517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$StatsNetwork.coverage" NAME="StatsNetwork Coverage Results" MODIFIED="1572363666155" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$DataSetLoader.coverage" NAME="DataSetLoader Coverage Results" MODIFIED="1572363945570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$DataSetLoader.coverage" NAME="DataSetLoader Coverage Results" MODIFIED="1573399608755" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$StatsNetwork.coverage" NAME="StatsNetwork Coverage Results" MODIFIED="1573399833131" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$pythonTesting__1_.coverage" NAME="pythonTesting (1) Coverage Results" MODIFIED="1571691183600" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$NetworkFile.coverage" NAME="NetworkFile Coverage Results" MODIFIED="1572357097757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$NetworkFile.coverage" NAME="NetworkFile Coverage Results" MODIFIED="1573388565480" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$StatsDatasetCreator.coverage" NAME="StatsDatasetCreator Coverage Results" MODIFIED="1572198551900" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/venv" />
     <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$CreateDataset.coverage" NAME="CreateDataset Coverage Results" MODIFIED="1572355094537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$StatsDatasetCreator__1_.coverage" NAME="StatsDatasetCreator (1) Coverage Results" MODIFIED="1572364884755" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$testing.coverage" NAME="testing Coverage Results" MODIFIED="1572364357553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$StatsDatasetCreator__1_.coverage" NAME="StatsDatasetCreator (1) Coverage Results" MODIFIED="1572963631551" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$testing.coverage" NAME="testing Coverage Results" MODIFIED="1573399754630" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/untitled$Test.coverage" NAME="Test Coverage Results" MODIFIED="1571580173828" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/untitled$NetworkFile.coverage" NAME="NetworkFile Coverage Results" MODIFIED="1571610052157" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Pokemon_Showdown_AI$Test__1_.coverage" NAME="Test (1) Coverage Results" MODIFIED="1572180217298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

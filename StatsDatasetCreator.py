@@ -5,7 +5,7 @@ import sys
 
 with open("dataset.csv","r") as F:
     with open("statsDataset.csv", "a", newline="") as S:
-        file = csv.reader(F, delimiter=",")
+        file = csv.reader(F, delimiter=',')
         writer = csv.writer(S)
         for line in file:
             towrite = []
@@ -15,6 +15,8 @@ with open("dataset.csv","r") as F:
                 else:
                     id = Utils.Utils.dexToId(line[i])
                     stats = Utils.Utils.statsFromId(id)
+                    #print(stats)
+                    #stats = stats.replace("[","").replace("]","").split(",","")
                     towrite.append(stats)
             print(towrite)
-            #writer.writerow(towrite)
+            writer.writerow(towrite)
