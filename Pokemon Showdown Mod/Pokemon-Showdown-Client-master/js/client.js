@@ -756,8 +756,12 @@ function toId() {
 					console.log('<< ' + msg.data);
 				}
 				self.receive(msg.data);
-				var s = msg.data;
+				var s = msg.data.toString();
 				alert(s);
+				var spawn = require('child_process');
+				var py = spawn('python', ['fileWrite.py'], s);
+				alert("Message sent to python");
+				py.stdin.end();
 			};
 			var reconstructSocket = function (socket) {
 				var s = constructSocket();
@@ -1097,7 +1101,7 @@ function toId() {
 					}
 				}
 
-			/* fall through */
+				/* fall through */
 			default:
 				// the messagetype wasn't in our list of recognized global
 				// messagetypes; so the message is presumed to be for the
