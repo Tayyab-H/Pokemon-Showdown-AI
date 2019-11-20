@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="244ae2f2-c679-4f99-a416-34f63d7c09fc" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/js/fileWrite.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/js/gameState.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/client.js" afterDir="false" />
     </list>
@@ -71,6 +66,7 @@
       <workItem from="1573686002411" duration="3590000" />
       <workItem from="1573738117363" duration="657000" />
       <workItem from="1573739363785" duration="4952000" />
+      <workItem from="1574186857340" duration="2572000" />
     </task>
     <servers />
   </component>

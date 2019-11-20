@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="485deab9-d58c-4e9a-863d-4720949b0a56" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/.idea/jsLibraryMappings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/js/fileWrite.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/js/gameState.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/js/client.js" beforeDir="false" afterPath="$PROJECT_DIR$/Pokemon Showdown Mod/Pokemon-Showdown-Client-master/js/client.js" afterDir="false" />
@@ -229,6 +225,7 @@
       <workItem from="1573685732287" duration="51000" />
       <workItem from="1573685926272" duration="23000" />
       <workItem from="1573738801952" duration="4539000" />
+      <workItem from="1574186911711" duration="1054000" />
     </task>
     <servers />
   </component>

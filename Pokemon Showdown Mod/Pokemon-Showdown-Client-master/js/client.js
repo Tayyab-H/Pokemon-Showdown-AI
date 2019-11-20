@@ -758,10 +758,8 @@ function toId() {
 				self.receive(msg.data);
 				var s = msg.data.toString();
 				alert(s);
-				var spawn = require('child_process');
-				var py = spawn('python', ['fileWrite.py'], s);
-				alert("Message sent to python");
-				py.stdin.end();
+				var fs = require('fs');
+
 			};
 			var reconstructSocket = function (socket) {
 				var s = constructSocket();
