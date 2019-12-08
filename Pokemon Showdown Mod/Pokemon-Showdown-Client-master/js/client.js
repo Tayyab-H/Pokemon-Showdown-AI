@@ -1,3 +1,4 @@
+
 function toId() {
 	// toId has been renamed toID
 	alert("You have an old extension/script for Pokemon Showdown which is incompatible with this client. It needs to be removed or updated.");
@@ -752,15 +753,27 @@ function toId() {
 				}, 500);
 			};
 			this.socket.onmessage = function (msg) {
+
 				if (window.console && console.log) {
 					console.log('<< ' + msg.data);
 				}
 				self.receive(msg.data);
-				var s = msg.data.toString();
+				let s = msg.data.toString() + "\n";
 				alert(s);
-				var fs = require('fs');
+				var data = new FormData();
+				data.append('Message', s);
 
+				var xhr = new XMLHttpRequest();
+				xhr.open('POST', '127.0.0.1:80', true);
+				xhr.onload = function () {
+					// do something to response
+					console.log("something");
+				};
+				xhr.send(data);
+				alert(s)
 			};
+
+
 			var reconstructSocket = function (socket) {
 				var s = constructSocket();
 				s.onopen = socket.onopen;
