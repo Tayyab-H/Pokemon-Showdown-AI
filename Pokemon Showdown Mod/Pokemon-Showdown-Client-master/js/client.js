@@ -1112,6 +1112,7 @@ function toId() {
 					}
 				}
 
+
 				/* fall through */
 			default:
 				// the messagetype wasn't in our list of recognized global
