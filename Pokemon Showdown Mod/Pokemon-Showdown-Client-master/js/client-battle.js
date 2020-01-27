@@ -51,7 +51,8 @@
 		},
 		events: {
 			'click .replayDownloadButton': 'clickReplayDownloadButton',
-			'change input[name=zmove]': 'updateZMove'
+			'change input[name=zmove]': 'updateZMove',
+			'change input[name=dynamax]': 'updateMaxMove'
 		},
 		battleEnded: false,
 		join: function () {
@@ -104,13 +105,13 @@
 		receive: function (data) {
 			this.add(data);
 		},
-		focus: function () {
+		focus: function (e) {
 			this.tooltips.hideTooltip();
 			if (this.battle.playbackState === 3 && !this.battlePaused) {
 				this.battle.play();
 				if (Dex.prefs('noanim')) this.battle.fastForwardTo(-1);
 			}
-			ConsoleRoom.prototype.focus.call(this);
+			ConsoleRoom.prototype.focus.call(this, e);
 		},
 		blur: function () {
 			this.battle.pause();
@@ -475,6 +476,16 @@
 			}
 			return '<button name="openTimer" class="button timerbutton' + timerTicking + '"><i class="fa fa-hourglass-start"></i> ' + time + '</button>';
 		},
+		updateMaxMove: function () {
+			var dynaChecked = this.$('input[name=dynamax]')[0].checked;
+			if (dynaChecked) {
+				this.$('.movebuttons-nomax').hide();
+				this.$('.movebuttons-max').show();
+			} else {
+				this.$('.movebuttons-nomax').show();
+				this.$('.movebuttons-max').hide();
+			}
+		},
 		updateZMove: function () {
 			var zChecked = this.$('input[name=zmove]')[0].checked;
 			if (zChecked) {
@@ -511,6 +522,8 @@
 			var canMegaEvo = curActive.canMegaEvo || switchables[pos].canMegaEvo;
 			var canZMove = curActive.canZMove || switchables[pos].canZMove;
 			var canUltraBurst = curActive.canUltraBurst || switchables[pos].canUltraBurst;
+			var canDynamax = curActive.canDynamax || switchables[pos].canDynamax;
+			var maxMoves = curActive.maxMoves || switchables[pos].maxMoves;
 			if (canZMove && typeof canZMove[0] === 'string') {
 				canZMove = _.map(canZMove, function (move) {
 					return {move: move, target: Dex.getMove(move).target};
@@ -597,6 +610,7 @@
 				var moveMenu = '';
 				var movebuttons = '';
 				var typeValueTracker = new ModifiableValue(this.battle, this.battle.mySide.active[pos], this.battle.myPokemon[pos]);
+				var currentlyDynamaxed = (!canDynamax && maxMoves);
 				for (var i = 0; i < curActive.moves.length; i++) {
 					var moveData = curActive.moves[i];
 					var move = this.battle.dex.getMove(moveData.move);
@@ -619,23 +633,35 @@
 				if (!hasMoves) {
 					moveMenu += '<button class="movebutton" name="chooseMove" value="0" data-move="Struggle" data-target="randomNormal">Struggle<br /><small class="type">Normal</small> <small class="pp">&ndash;</small>&nbsp;</button> ';
 				} else {
-					if (canZMove) {
-						movebuttons = '<div class="movebuttons-noz">' + movebuttons + '</div><div class="movebuttons-z" style="display:none">';
+					if (canZMove || canDynamax || currentlyDynamaxed) {
+						var classType = canZMove ? 'z' : 'max';
+						if (currentlyDynamaxed) {
+							movebuttons = '';
+						} else {
+							movebuttons = '<div class="movebuttons-no' + classType + '">' + movebuttons + '</div><div class="movebuttons-' + classType + '" style="display:none">';
+						}
+						var specialMoves = canZMove ? canZMove : maxMoves.maxMoves;
 						for (var i = 0; i < curActive.moves.length; i++) {
-							if (canZMove[i]) {
+							if (specialMoves[i]) {
 								// when possible, use Z move to decide type, for cases like Z-Hidden Power
 								var baseMove = this.battle.dex.getMove(curActive.moves[i].move);
 								// might not exist, such as for Z status moves - fall back on base move to determine type then
-								var zMove = this.battle.dex.getMove(canZMove[i].move);
-								var moveType = this.tooltips.getMoveType(zMove.exists ? zMove : baseMove, typeValueTracker)[0];
+								var specialMove = this.battle.dex.getMove(specialMoves[i].move);
+								var moveType = this.tooltips.getMoveType(specialMove.exists ? specialMove : baseMove, typeValueTracker)[0];
 								var tooltipArgs = 'zmove|' + baseMove.id + '|' + pos;
-								movebuttons += '<button class="type-' + moveType + ' has-tooltip" name="chooseMove" value="' + (i + 1) + '" data-move="' + BattleLog.escapeHTML(canZMove[i].move) + '" data-target="' + BattleLog.escapeHTML(canZMove[i].target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
-								movebuttons += canZMove[i].move + '<br /><small class="type">' + (moveType ? Dex.getType(moveType).name : "Unknown") + '</small> <small class="pp">1/1</small>&nbsp;</button> ';
+								movebuttons += '<button class="type-' + moveType + ' has-tooltip" name="chooseMove" value="' + (i + 1) + '" data-move="' + BattleLog.escapeHTML(specialMoves[i].move) + '" data-target="' + BattleLog.escapeHTML(specialMoves[i].target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
+								var pp = curActive.moves[i].pp + '/' + curActive.moves[i].maxpp;
+								if (canZMove) {
+									pp = '1/1';
+								} else if (!curActive.moves[i].maxpp) {
+									pp = '&ndash;';
+								}
+								movebuttons += specialMove.name + '<br /><small class="type">' + (moveType ? Dex.getType(moveType).name : "Unknown") + '</small> <small class="pp">' + pp + '</small>&nbsp;</button> ';
 							} else {
 								movebuttons += '<button disabled="disabled">&nbsp;</button>';
 							}
 						}
-						movebuttons += '</div>';
+						if (!currentlyDynamaxed) movebuttons += '</div>';
 					}
 					moveMenu += movebuttons;
 				}
@@ -645,6 +671,8 @@
 					moveMenu += '<br /><label class="megaevo"><input type="checkbox" name="zmove" />&nbsp;Z-Power</label>';
 				} else if (canUltraBurst) {
 					moveMenu += '<br /><label class="megaevo"><input type="checkbox" name="ultraburst" />&nbsp;Ultra Burst</label>';
+				} else if (canDynamax) {
+					moveMenu += '<br /><label class="megaevo"><input type="checkbox" name="dynamax" />&nbsp;Dynamax</label>';
 				}
 				if (this.finalDecisionMove) {
 					moveMenu += '<em style="display:block;clear:both">You <strong>might</strong> have some moves disabled, so you won\'t be able to cancel an attack!</em><br/>';
@@ -840,7 +868,7 @@
 					var parts = this.choice.choices[i].split(' ');
 					switch (parts[0]) {
 					case 'move':
-						var move = this.request.active[i].moves[parts[1] - 1].move;
+						var move = this.request.active[i].moves[parseInt(parts[1], 10) - 1].move;
 						var target = '';
 						buf += myActive[i].species + ' will ';
 						if (parts.length > 2) {
@@ -850,7 +878,12 @@
 								targetPos = parts[3];
 							}
 							if (targetPos === 'zmove') {
-								move = this.request.active[i].canZMove[parts[1] - 1].move;
+								move = this.request.active[i].canZMove[parseInt(parts[1], 10) - 1].move;
+								targetPos = parts[3];
+							}
+							if (targetPos === 'dynamax') {
+								move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move;
+								buf += 'dynamax, then ';
 								targetPos = parts[3];
 							}
 							if (targetPos) {
@@ -866,6 +899,10 @@
 								} else {
 									target = ''; // targeting an empty slot
 								}
+							}
+						} else {
+							if (this.request.active[i].maxMoves && !this.request.active[i].canDynamax) {
+								move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move;
 							}
 						}
 						buf += 'use ' + Dex.getMove(move).name + (target ? ' against ' + target : '') + '.<br />';
@@ -1065,11 +1102,12 @@
 				var isMega = !!(this.$('input[name=megaevo]')[0] || '').checked;
 				var isZMove = !!(this.$('input[name=zmove]')[0] || '').checked;
 				var isUltraBurst = !!(this.$('input[name=ultraburst]')[0] || '').checked;
+				var isDynamax = !!(this.$('input[name=dynamax]')[0] || '').checked;
 
 				var target = e.getAttribute('data-target');
 				var choosableTargets = {normal: 1, any: 1, adjacentAlly: 1, adjacentAllyOrSelf: 1, adjacentFoe: 1};
 
-				this.choice.choices.push('move ' + pos + (isMega ? ' mega' : '') + (isZMove ? ' zmove' : '') + (isUltraBurst ? ' ultra' : ''));
+				this.choice.choices.push('move ' + pos + (isMega ? ' mega' : '') + (isZMove ? ' zmove' : '') + (isUltraBurst ? ' ultra' : '') + (isDynamax ? ' dynamax' : ''));
 				if (myActive.length > 1 && target in choosableTargets) {
 					this.choice.type = 'movetarget';
 					this.choice.moveTarget = target;

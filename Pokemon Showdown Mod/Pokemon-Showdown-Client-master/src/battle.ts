@@ -516,6 +516,9 @@ class Pokemon implements PokemonDetails, PokemonHealth {
 	getTemplate(serverPokemon?: ServerPokemon) {
 		return this.side.battle.dex.getTemplate(this.getSpecies(serverPokemon));
 	}
+	getBaseTemplate() {
+		return this.side.battle.dex.getTemplate(this.species);
+	}
 	reset() {
 		this.clearVolatile();
 		this.hp = this.maxhp;
@@ -1514,7 +1517,10 @@ class Battle {
 				let ofpoke = this.getPokemon(kwArgs.of);
 				this.activateAbility(ofpoke, effect);
 				if (effect.effectType === 'Item') {
-					(ofpoke || poke).item = effect.name;
+					const itemPoke = ofpoke || poke;
+					if (itemPoke.prevItem !== effect.name) {
+						itemPoke.item = effect.name;
+					}
 				}
 				switch (effect.id) {
 				case 'brn':
@@ -2315,6 +2321,10 @@ class Battle {
 				if (kwArgs.silent) break;
 				this.scene.typeAnim(poke, type);
 				break;
+			case 'dynamax':
+				poke.addVolatile('dynamax' as ID);
+				this.scene.animTransform(poke, true);
+				break;
 			case 'powertrick':
 				this.scene.resultAnim(poke, 'Power Trick', 'neutral');
 				break;
@@ -2452,6 +2462,9 @@ class Battle {
 				// do nothing
 			} else {
 				switch (effect.id) {
+				case 'dynamax':
+					this.scene.animTransform(poke);
+					break;
 				case 'powertrick':
 					this.scene.resultAnim(poke, 'Power Trick', 'neutral');
 					break;
@@ -2654,7 +2667,7 @@ class Battle {
 				poke.removeVolatile('telekinesis' as ID);
 				this.scene.anim(poke, {time: 100});
 				break;
-			case 'skillswap':
+			case 'skillswap': case 'wanderingspirit':
 				if (this.gen <= 4) break;
 				let pokeability = Dex.sanitizeName(kwArgs.ability) || target!.ability;
 				let targetability = Dex.sanitizeName(kwArgs.ability2) || poke.ability;
@@ -2813,7 +2826,7 @@ class Battle {
 			break;
 		}
 		default: {
-			if (this.errorCallback) this.errorCallback(this);
+			throw new Error(`Unrecognized minor action: ${args[0]}`);
 			break;
 		}}
 	}

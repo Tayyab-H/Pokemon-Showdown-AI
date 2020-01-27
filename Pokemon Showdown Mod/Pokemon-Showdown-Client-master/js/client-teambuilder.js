@@ -118,7 +118,7 @@
 		// format
 		// Special values:
 		// '' -     show all
-		// 'gen7' - show teams with no format
+		// 'gen8' - show teams with no format
 		// '/' -    show teams with no folder
 		curFolder: '',
 		curFolderKeep: '',
@@ -128,7 +128,7 @@
 		update: function () {
 			teams = Storage.teams;
 			if (this.curTeam) {
-				this.ignoreEVLimits = (this.curTeam.gen < 3 || this.curTeam.format === 'gen7balancedhackmons' || this.curTeam.format === 'gen7metronomebattle' || this.curTeam.format.endsWith('norestrictions'));
+				this.ignoreEVLimits = (this.curTeam.gen < 3 || this.curTeam.format === 'gen7balancedhackmons' || this.curTeam.format === 'gen8metronomebattle' || this.curTeam.format.endsWith('norestrictions'));
 				if (this.curSet) {
 					return this.updateSetView();
 				}
@@ -226,7 +226,7 @@
 					format = this.curFolder;
 				} else {
 					format = Storage.teams[i].format;
-					if (!format) format = 'gen7';
+					if (!format) format = 'gen8';
 				}
 				if (!format) continue;
 				if (format in folderTable) continue;
@@ -239,18 +239,20 @@
 					}
 					continue;
 				}
-				if (format === 'gen7') {
-					folders.push('A~');
+				if (format === 'gen8') {
+					folders.push('B~');
 					continue;
 				}
 				switch (format.slice(0, 4)) {
-				case 'gen1': format = 'G' + format.slice(4); break;
-				case 'gen2': format = 'F' + format.slice(4); break;
-				case 'gen3': format = 'E' + format.slice(4); break;
-				case 'gen4': format = 'D' + format.slice(4); break;
-				case 'gen5': format = 'C' + format.slice(4); break;
-				case 'gen6': format = 'B' + format.slice(4); break;
-				case 'gen7': format = 'A' + format.slice(4); break;
+				case 'gen1': format = 'I' + format.slice(4); break;
+				case 'gen2': format = 'H' + format.slice(4); break;
+				case 'gen3': format = 'G' + format.slice(4); break;
+				case 'gen4': format = 'F' + format.slice(4); break;
+				case 'gen5': format = 'E' + format.slice(4); break;
+				case 'gen6': format = 'D' + format.slice(4); break;
+				case 'gen7': format = 'C' + format.slice(4); break;
+				case 'gen8': format = 'B' + format.slice(4); break;
+				case 'gen9': format = 'A' + format.slice(4); break;
 				default: format = 'X' + format; break;
 				}
 				folders.push(format);
@@ -263,13 +265,15 @@
 				var format = folders[i];
 				var newGen;
 				switch (format.charAt(0)) {
-				case 'G': newGen = '1'; break;
-				case 'F': newGen = '2'; break;
-				case 'E': newGen = '3'; break;
-				case 'D': newGen = '4'; break;
-				case 'C': newGen = '5'; break;
-				case 'B': newGen = '6'; break;
-				case 'A': newGen = '7'; break;
+				case 'I': newGen = '1'; break;
+				case 'H': newGen = '2'; break;
+				case 'G': newGen = '3'; break;
+				case 'F': newGen = '4'; break;
+				case 'E': newGen = '5'; break;
+				case 'D': newGen = '6'; break;
+				case 'C': newGen = '7'; break;
+				case 'B': newGen = '8'; break;
+				case 'A': newGen = '9'; break;
 				case 'X': newGen = 'X'; break;
 				case 'Z': newGen = '/'; break;
 				}
@@ -349,7 +353,7 @@
 
 			var newButtonText = "New Team";
 			if (filterFolder) newButtonText = "New Team in folder";
-			if (filterFormat && filterFormat !== 'gen7') {
+			if (filterFormat && filterFormat !== 'gen8') {
 				newButtonText = "New " + BattleLog.escapeFormat(filterFormat) + " Team";
 			}
 			buf += '<p><button name="newTop" class="button big"><i class="fa fa-plus-circle"></i> ' + newButtonText + '</button> ' +
@@ -391,7 +395,7 @@
 						continue;
 					}
 
-					if (filterFormat && filterFormat !== (team.format || 'gen7')) continue;
+					if (filterFormat && filterFormat !== (team.format || 'gen8')) continue;
 					if (filterFolder !== undefined && filterFolder !== team.folder) continue;
 
 					if (this.curSearchVal) {
@@ -750,11 +754,11 @@
 					iconCache: ''
 				};
 			} else {
-				var format = this.curFolder || 'gen7';
+				var format = this.curFolder || 'gen8';
 				var folder = '';
 				if (format && format.charAt(format.length - 1) === '/') {
 					folder = format.slice(0, -1);
-					format = 'gen7';
+					format = 'gen8';
 				}
 				newTeam = {
 					name: 'Untitled ' + (teams.length + 1),
@@ -1088,7 +1092,7 @@
 					buf += '<li><button name="undeleteSet"><i class="fa fa-undo"></i> Undo Delete</button></li>';
 				}
 				if (i === 0) {
-					buf += '<li><button name="import" class="button big"><i class="fa fa-upload"></i> Import from text</button></li>';
+					buf += '<li><button name="import" class="button big"><i class="fa fa-upload"></i> Import from text or URL</button></li>';
 				}
 				if (i < 6) {
 					buf += '<li><button name="addPokemon" class="button big"><i class="fa fa-plus"></i> Add Pok&eacute;mon</button></li>';
@@ -1103,6 +1107,7 @@
 		renderSet: function (set, i) {
 			var template = Dex.getTemplate(set.species);
 			var isLetsGo = this.curTeam.format.startsWith('gen7letsgo');
+			var isNatDex = this.curTeam.format.includes('nationaldex');
 			var buf = '<li value="' + i + '">';
 			if (!set.species) {
 				if (this.deletedSet) {
@@ -1140,8 +1145,19 @@
 			buf += '<span class="detailcell detailcell-first"><label>Level</label>' + (set.level || 100) + '</span>';
 			if (this.curTeam.gen > 1) {
 				buf += '<span class="detailcell"><label>Gender</label>' + GenderChart[set.gender || template.gender || 'N'] + '</span>';
-				buf += '<span class="detailcell"><label>Happiness</label>' + (typeof set.happiness === 'number' && !isLetsGo ? set.happiness : isLetsGo ? 70 : 255) + '</span>';
+				if (isLetsGo) {
+					buf += '<span class="detailcell"><label>Happiness</label>' + (typeof set.happiness === 'number' ? set.happiness : 70) + '</span>';
+				} else if (this.curTeam.gen < 8 || isNatDex) {
+					buf += '<span class="detailcell"><label>Happiness</label>' + (typeof set.happiness === 'number' ? set.happiness : 255) + '</span>';
+				}
 				buf += '<span class="detailcell"><label>Shiny</label>' + (set.shiny ? 'Yes' : 'No') + '</span>';
+				if (!isLetsGo) {
+					if (this.curTeam.gen === 8 && !isNatDex) {
+						// Hidden Power isn't in normal Gen 8
+					} else {
+						buf += '<span class="detailcell"><label>HP Type</label>' + (set.hpType || 'Dark') + '</span>';
+					}
+				}
 			}
 			buf += '</button></div></div>';
 
@@ -1209,8 +1225,44 @@
 		},
 
 		saveImport: function () {
-			Storage.activeSetList = this.curSetList = Storage.importTeam(this.$('.teamedit textarea').val());
-			this.back();
+			var text = this.$('.teamedit textarea').val();
+			var url = this.importableUrl(text);
+
+			if (url) {
+				this.$('.teamedit textarea, .teamedit .savebutton').attr('disabled', true);
+				var self = this;
+				$.ajax({
+					type: 'GET',
+					url: url,
+					success: function (data) {
+						Storage.activeSetList = self.curSetList = Storage.importTeam(data);
+						self.$('.teamedit textarea, .teamedit .savebutton').attr('disabled', null);
+						self.back();
+					},
+					error: function () {
+						app.addPopupMessage("Could not fetch a team from this URL. Make sure you copied the full link, or paste the team in by hand.");
+						self.$('.teamedit textarea, .teamedit .savebutton').attr('disabled', null);
+					}
+				});
+			} else {
+				Storage.activeSetList = this.curSetList = Storage.importTeam(text);
+				this.back();
+			}
+		},
+		importableUrl: function (value) {
+			var match = value.match(/^https?:\/\/(pokepast\.es|gist\.github(?:usercontent)?\.com)\/(.*)\s*$/);
+			if (!match) return;
+
+			var host = match[1];
+			var path = match[2];
+
+			switch (host) {
+			case 'pokepast.es':
+				return 'https://pokepast.es/' + path.replace(/\/.*/, '') + '/raw';
+			default: // gist
+				var split = path.split('/');
+				return split.length < 2 ? undefined : 'https://gist.githubusercontent.com/' + split[0] + '/' + split[1] + '/raw';
+			}
 		},
 		addPokemon: function () {
 			if (!this.curTeam) return;
@@ -1450,6 +1502,66 @@
 				.val(Storage.exportTeam([this.curSet]).trim())
 				.focus()
 				.select();
+
+			this.getSmogonSets();
+		},
+		getSmogonSets: function () {
+			this.$('.teambuilder-pokemon-import .teambuilder-import-smogon-sets').empty();
+
+			var format = this.curTeam.format;
+			// If we don't have a specific format, don't try and guess which sets to use.
+			if (format.match(/gen\d$/)) {
+				return false;
+			}
+
+			var self = this;
+			this.smogonSets = this.smogonSets || {};
+			if (this.smogonSets[format] !== undefined) {
+				this.importSetButtons();
+				return;
+			}
+			// We fetch this as 'text' and JSON.parse it ourserves in order to have consistent behavior
+			// between the localdev CORS helper and the real jQuery.get function, which would already parse
+			// this into an object based on the content-type header.
+			$.get('https://play.pokemonshowdown.com/data/sets/' + format + '.json', {}, function (data) {
+				try {
+					self.smogonSets[format] = JSON.parse(data);
+				} catch (e) {
+					// An error occured. Mark this as false, so that we don't try to reimport sets for this format
+					// in the future.
+					self.smogonSets[format] = false;
+				}
+				self.importSetButtons();
+			}, 'text');
+		},
+		importSetButtons: function () {
+			var formatSets = this.smogonSets[this.curTeam.format];
+			var species = this.curSet.species;
+
+			var $setDiv = this.$('.teambuilder-pokemon-import .teambuilder-import-smogon-sets');
+			$setDiv.empty();
+
+			if (!formatSets) {
+				return;
+			}
+
+			var sets = $.extend({}, formatSets['smogon.com/dex'][species], formatSets['smogon.com/stats'][species]);
+
+			$setDiv.text('Sample sets: ');
+			for (var set in sets) {
+				$setDiv.append('<button name="importSmogonSet">' + BattleLog.escapeHTML(set) + '</button>');
+			}
+		},
+		importSmogonSet: function (i, button) {
+			var formatSets = this.smogonSets[this.curTeam.format];
+			var species = this.curSet.species;
+
+			var setName = this.$(button).text();
+			var smogonSet = formatSets['smogon.com/dex'][species][setName] || formatSets['smogon.com/stats'][species][setName];
+			var curSet = $.extend({}, this.curSet, smogonSet);
+
+			var text = Storage.exportTeam([curSet]);
+			this.$('.teambuilder-pokemon-import .pokemonedit').val(text);
 		},
 		closePokemonImport: function (force) {
 			if (!this.wasViewingPokemon) return this.back();
@@ -1536,6 +1648,7 @@
 			buf += '<div class="teambuilder-pokemon-import">';
 			buf += '<div class="pokemonedit-buttons"><button name="closePokemonImport"><i class="fa fa-chevron-left"></i> Back</button> <button name="savePokemonImport"><i class="fa fa-floppy-o"></i> Save</button></div>';
 			buf += '<textarea class="pokemonedit textbox" rows="14"></textarea>';
+			buf += '<div class="teambuilder-import-smogon-sets"></div>';
 			buf += '</div>';
 
 			this.$el.html('<div class="teamwrapper">' + buf + '</div>');
@@ -1763,6 +1876,7 @@
 				smogdexid = 'meowstic-m';
 			} else if (template.forme) {
 				switch (template.baseSpecies) {
+				case 'Alcremie':
 				case 'Basculin':
 				case 'Burmy':
 				case 'Castform':
@@ -1778,8 +1892,10 @@
 				case 'Mimikyu':
 				case 'Minior':
 				case 'Pikachu':
+				case 'Polteageist':
 				case 'Sawsbuck':
 				case 'Shellos':
+				case 'Sinistea':
 				case 'Vivillon':
 					break;
 				default:
@@ -1788,7 +1904,7 @@
 				}
 			}
 
-			var generationNumber = 7;
+			var generationNumber = 8;
 			if (format.substr(0, 3) === 'gen') {
 				var number = format.charAt(3);
 				if ('1' <= number && number <= '6') {
@@ -1796,7 +1912,7 @@
 					format = format.substr(4);
 				}
 			}
-			var generation = ['rb', 'gs', 'rs', 'dp', 'bw', 'xy', 'sm'][generationNumber - 1];
+			var generation = ['rb', 'gs', 'rs', 'dp', 'bw', 'xy', 'sm', 'ss'][generationNumber - 1];
 			if (format === 'battlespotdoubles') {
 				smogdexid += '/vgc15';
 			} else if (format === 'doublesou' || format === 'doublesuu') {
@@ -1806,39 +1922,12 @@
 			}
 			return 'http://smogon.com/dex/' + generation + '/pokemon/' + smogdexid + '/';
 		},
-		getBaseStats: function (template) {
-			var baseStats = template.baseStats;
-			var gen = this.curTeam.gen;
-			if (gen < 7) {
-				var overrideStats = BattleTeambuilderTable['gen' + gen].overrideStats[template.id];
-				if (overrideStats || gen === 1) {
-					baseStats = {
-						hp: template.baseStats.hp,
-						atk: template.baseStats.atk,
-						def: template.baseStats.def,
-						spa: template.baseStats.spa,
-						spd: template.baseStats.spd,
-						spe: template.baseStats.spe
-					};
-				}
-				if (overrideStats) {
-					if ('hp' in overrideStats) baseStats.hp = overrideStats.hp;
-					if ('atk' in overrideStats) baseStats.atk = overrideStats.atk;
-					if ('def' in overrideStats) baseStats.def = overrideStats.def;
-					if ('spa' in overrideStats) baseStats.spa = overrideStats.spa;
-					if ('spd' in overrideStats) baseStats.spd = overrideStats.spd;
-					if ('spe' in overrideStats) baseStats.spe = overrideStats.spe;
-				}
-				if (gen === 1) baseStats.spd = 0;
-			}
-			return baseStats;
-		},
 		updateStatForm: function (setGuessed) {
 			var buf = '';
 			var set = this.curSet;
-			var template = Dex.getTemplate(this.curSet.species);
+			var template = Dex.forGen(this.curTeam.gen).getTemplate(this.curSet.species);
 
-			var baseStats = this.getBaseStats(template);
+			var baseStats = template.baseStats;
 
 			buf += '<div class="resultheader"><h3>EVs</h3></div>';
 			buf += '<div class="statform">';
@@ -2358,6 +2447,7 @@
 			var buf = '';
 			var set = this.curSet;
 			var isLetsGo = this.curTeam.format.startsWith('gen7letsgo');
+			var isNatDex = this.curTeam.gen === 8 && this.curTeam.format.includes('nationaldex');
 			var template = Dex.getTemplate(set.species);
 			if (!set) return;
 			buf += '<div class="resultheader"><h3>Details</h3></div>';
@@ -2381,10 +2471,10 @@
 				}
 				buf += '</div></div>';
 
-				if (!isLetsGo) {
-					buf += '<div class="formrow"><label class="formlabel">Happiness:</label><div><input type="number" min="0" max="255" step="1" name="happiness" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" class="textbox inputform numform" /></div></div>';
-				} else {
+				if (isLetsGo) {
 					buf += '<div class="formrow"><label class="formlabel">Happiness:</label><div><input type="number" name="happiness" value="70" class="textbox inputform numform" /></div></div>';
+				} else {
+					buf += '<div class="formrow"><label class="formlabel">Happiness:</label><div><input type="number" min="0" max="255" step="1" name="happiness" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" class="textbox inputform numform" /></div></div>';
 				}
 
 				buf += '<div class="formrow"><label class="formlabel">Shiny:</label><div>';
@@ -2403,7 +2493,7 @@
 				buf += '</select></div></div>';
 			}
 
-			if (this.curTeam.gen > 6) {
+			if (this.curTeam.gen === 7 || isNatDex) {
 				buf += '<div class="formrow"><label class="formlabel" title="Hidden Power Type">Hidden Power:</label><div><select name="hptype">';
 				buf += '<option value=""' + (!set.hpType ? ' selected="selected"' : '') + '>(automatic type)</option>'; // unset
 				for (var type in exports.BattleTypeChart) {
@@ -2480,12 +2570,13 @@
 			buf += '<span class="detailcell detailcell-first"><label>Level</label>' + (set.level || 100) + '</span>';
 			if (this.curTeam.gen > 1) {
 				buf += '<span class="detailcell"><label>Gender</label>' + GenderChart[set.gender || 'N'] + '</span>';
-				if (!this.curTeam.format.startsWith('gen7letsgo')) {
-					buf += '<span class="detailcell"><label>Happiness</label>' + (typeof set.happiness === 'number' ? set.happiness : 255) + '</span>';
-				} else {
+				if (this.curTeam.format.startsWith('gen7letsgo')) {
 					buf += '<span class="detailcell"><label>Happiness</label>70</span>';
+				} else {
+					buf += '<span class="detailcell"><label>Happiness</label>' + (typeof set.happiness === 'number' ? set.happiness : 255) + '</span>';
 				}
 				buf += '<span class="detailcell"><label>Shiny</label>' + (set.shiny ? 'Yes' : 'No') + '</span>';
+				buf += '<span class="detailcell"><label>HP Type</label>' + (set.hpType || 'Dark') + '</span>';
 			}
 			this.$('button[name=details]').html(buf);
 
@@ -2716,6 +2807,30 @@
 				this.$(!this.$('input[name=item]').length ? (this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move1]') : 'input[name=item]').select();
 				return true;
 			}
+			if (val === 'citizensnips' || val === 'snips') {
+				var set = this.curSet;
+				set.name = "citizen snips";
+				set.species = 'Drapion';
+				delete set.level;
+				var baseFormat = this.curTeam.format;
+				if (baseFormat.substr(0, 3) === 'gen') baseFormat = baseFormat.substr(4);
+				if (baseFormat.substr(0, 8) === 'pokebank') baseFormat = baseFormat.substr(8);
+				if (this.curTeam && this.curTeam.format) {
+					if (baseFormat === 'battlespotsingles' || baseFormat === 'battlespotdoubles' || baseFormat.substr(0, 3) === 'vgc') set.level = 50;
+					if (baseFormat.substr(0, 2) === 'lc') set.level = 5;
+				}
+				if (set.happiness) delete set.happiness;
+				if (set.shiny) delete set.shiny;
+				set.item = 'Leftovers';
+				set.ability = 'Battle Armor';
+				set.moves = ['Acupressure', 'Knock Off', 'Rest', 'Sleep Talk'];
+				set.evs = {hp: 248, atk: 0, def: 96, spa: 0, spd: 108, spe: 56};
+				set.ivs = {};
+				set.nature = 'Impish';
+				this.updateSetTop();
+				this.$(!this.$('input[name=item]').length ? (this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move1]') : 'input[name=item]').select();
+				return true;
+			}
 		},
 		chartSet: function (val, selectNext) {
 			var inputName = this.curChartName;
@@ -2846,7 +2961,10 @@
 				if (!moves[i]) continue;
 				if (moves[i].substr(0, 13) === 'Hidden Power ') hasHiddenPower = true;
 				var move = Dex.forGen(this.curTeam.gen).getMove(moves[i]);
-				if (move.category === 'Physical' &&
+				if (move.id === 'transform') {
+					hasHiddenPower = true; // A Pokemon with Transform can copy another Pokemon that knows Hidden Power
+					if (moves.length === 1) minAtk = false;
+				} else if (move.category === 'Physical' &&
 						!move.damage && !move.ohko && move.id !== 'rapidspin' && move.id !== 'foulplay' && move.id !== 'endeavor' && move.id !== 'counter') {
 					minAtk = false;
 				} else if (move.id === 'metronome' || move.id === 'assist' || move.id === 'copycat' || move.id === 'mefirst') {
@@ -2947,13 +3065,13 @@
 
 			// do this after setting set.evs because it's assumed to exist
 			// after getStat is run
-			var template = Dex.getTemplate(set.species);
+			var template = Dex.forGen(this.curTeam.gen).getTemplate(set.species);
 			if (!template.exists) return 0;
 
 			if (!set.level) set.level = 100;
 			if (typeof set.ivs[stat] === 'undefined') set.ivs[stat] = 31;
 
-			var baseStat = (this.getBaseStats(template))[stat];
+			var baseStat = template.baseStats[stat];
 			var iv = (set.ivs[stat] || 0);
 			if (this.curTeam.gen <= 2) iv &= 30;
 			var ev = set.evs[stat];

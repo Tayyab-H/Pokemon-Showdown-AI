@@ -570,6 +570,7 @@ select {
 .tabbar a.cur + .closebutton {
 	top: 2px;
 }
+.header-username,
 .closebutton,
 .minimizebutton {
 	text-decoration: none;
@@ -585,11 +586,17 @@ select {
 .closebutton:hover {
 	color: #BB2222;
 }
+span.header-username:hover {
+	color: #333333;
+}
 .minimizebutton:hover,
 .pm-window h3:hover .minimizebutton {
 	color: #333333;
 }
 .pm-window h3 .closebutton:hover + .minimizebutton {
+	color: #999999 !important;
+}
+.pm-window h3 span.header-username:hover + .minimizebutton {
 	color: #999999 !important;
 }
 .closebutton:active,
@@ -1016,6 +1023,9 @@ p.or:after {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
+}
+.pm-buttonbar {
+	padding-bottom: 3px;
 }
 .pm-log-add {
 	color: black;
@@ -1674,6 +1684,19 @@ a.ilink.yours {
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
 }
+.pm-buttonbar {
+	height: 21px;
+}
+.pm-buttonbar button {
+	float: left;
+	font: 8pt Verdana, sans-serif;
+	height: 21px;
+	background: #EEF2F5;
+	color: black;
+	border: 0;
+	border-right: 1px solid #AAAAAA;
+	border-bottom: 1px solid #AAAAAA;
+}
 .userlist-minimized {
 	height: 21px;
 	bottom: auto;
@@ -1692,7 +1715,8 @@ a.ilink.yours {
 	cursor: pointer;
 }
 .userlist-minimized .userlist-count:hover,
-.userlist-maximized .userlist-count:hover {
+.userlist-maximized .userlist-count:hover,
+.pm-buttonbar button:hover {
 	background: #DEE4EA;
 }
 .chat-log.hasuserlist,
@@ -3112,6 +3136,11 @@ a.ilink.yours {
 	max-height: 21pt;
 	display: block;
 }
+.usergroup {
+	color: #333;
+	font-size: 8pt;
+	font-weight: bold;
+}
 
 .userdetails {
 	min-height: 80px;
@@ -3234,12 +3263,14 @@ a.ilink.yours {
 	background: #444444;
 	color: #DDD;
 }
-.dark .userlist-minimized {
+.dark .userlist-minimized,
+.dark .pm-buttonbar button {
 	background: #444444;
 	color: #4488EE;
 }
 .dark .userlist-minimized .userlist-count:hover,
-.dark .userlist-maximized .userlist-count:hover {
+.dark .userlist-maximized .userlist-count:hover,
+.dark .pm-buttonbar button:hover {
 	background: #666666;
 }
 
@@ -3271,6 +3302,10 @@ a.ilink.yours {
 	border-color: #888;
 
 	box-shadow: 2px 2px 3px rgba(0,0,0,.2);
+}
+
+.dark .usergroup {
+	color: #BBB;
 }
 
 .dark .popupmenu button,

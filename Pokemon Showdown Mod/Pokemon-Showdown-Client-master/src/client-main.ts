@@ -259,7 +259,7 @@ interface PSGroup {
 
 class PSServer {
 	id = 'showdown';
-	host = 'sim2.psim.us';
+	host = 'sim3.psim.us';
 	port = 8000;
 	altport = 80;
 	registered = true;
@@ -606,15 +606,27 @@ const PS = new class extends PSModel {
 			maxWidth: 640,
 		};
 	}
-	updateLayout() {
+	updateLayout(alreadyUpdating?: boolean) {
 		const leftRoomWidth = this.calculateLeftRoomWidth();
+		let roomHeight = document.body.offsetHeight - 56;
+		let totalWidth = document.body.offsetWidth;
+		if (leftRoomWidth) {
+			this.leftRoom.width = leftRoomWidth;
+			this.leftRoom.height = roomHeight;
+			this.rightRoom!.width = totalWidth + 1 - leftRoomWidth;
+			this.rightRoom!.height = roomHeight;
+		} else {
+			this.activePanel.width = totalWidth;
+			this.activePanel.height = roomHeight;
+		}
+
 		if (this.leftRoomWidth !== leftRoomWidth) {
 			this.leftRoomWidth = leftRoomWidth;
-			this.update(true);
+			if (!alreadyUpdating) this.update(true);
 		}
 	}
 	update(layoutAlreadyUpdated?: boolean) {
-		if (!layoutAlreadyUpdated) this.updateLayout();
+		if (!layoutAlreadyUpdated) this.updateLayout(true);
 		super.update();
 	}
 	receive(msg: string) {
@@ -807,6 +819,7 @@ const PS = new class extends PSModel {
 		if (updated) this.update();
 	}
 	focusRoom(roomid: RoomID) {
+		if (this.room.id === roomid) return;
 		if (this.leftRoomList.includes(roomid)) {
 			this.leftRoom = this.rooms[roomid]!;
 			this.activePanel = this.leftRoom;
@@ -994,6 +1007,7 @@ const PS = new class extends PSModel {
 		if (!skipUpdate) this.update();
 	}
 	join(roomid: RoomID, side?: PSRoomLocation | null, noFocus?: boolean) {
+		if (this.room.id === roomid) return;
 		this.addRoom({id: roomid, side}, noFocus);
 		this.update();
 	}
