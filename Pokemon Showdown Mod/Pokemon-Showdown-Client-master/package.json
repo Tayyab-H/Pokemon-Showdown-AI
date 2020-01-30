@@ -24,9 +24,13 @@
     "@babel/plugin-transform-react-jsx": "^7.3.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-typescript": "^7.3.3",
+    "browserify": "^16.5.0",
+    "commonjs": "0.0.1",
     "google-auth-library": "^3.1.0",
     "image-size": "^0.7.2",
-    "output-file-sync": "^2.0.1"
+    "output-file-sync": "^2.0.1",
+    "tsify": "^4.0.1",
+    "w3c-xmlhttprequest": "^2.1.3"
   },
   "devDependencies": {
     "@types/jquery": "^3.3.29",
