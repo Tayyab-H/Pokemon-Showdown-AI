@@ -26,7 +26,6 @@
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 /** [id, element?, ...misc] */
 type EffectState = any[] & {0: ID};
 /** [name, minTimeLeft, maxTimeLeft] */
@@ -34,6 +33,7 @@ type WeatherState = [string, number, number];
 type EffectTable = {[effectid: string]: EffectState};
 type HPColor = 'r' | 'y' | 'g';
 //import XMLHttpRequest from 'w3c-xmlhttprequest';
+const pokedex = require("./pokedex");
 class Pokemon implements PokemonDetails, PokemonHealth {
 
 	name = '';
@@ -1272,9 +1272,21 @@ class Battle {
 		xhr.open("POST", 'http://127.0.0.1/postmethod', true);
 		xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
 		// @ts-ignore
-		let PokemonList = [this.myPokemon[0],this.myPokemon[1],this.myPokemon[2],this.myPokemon[3],this.myPokemon[4],this.myPokemon[5]];
+		let PokemonList = this.myPokemon;
+		let enemyPokemonList = this.yourSide.pokemon;
+		let x = [];
+		//@ts-ignore
+		for (let i = 0; i < PokemonList.length; i++){
+			//@ts-ignore
+			x.push({name: PokemonList[i].ident, moves: PokemonList[i].moves, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active});
+		}
+
+		for (let i = 0; i < enemyPokemonList.length; i++){
+			x.push({name: enemyPokemonList[i].ident, moves: enemyPokemonList[i].moves, hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
+		}
 		// @ts-ignore
-		xhr.send(JSON.stringify(PokemonList));
+		//xhr.send(JSON.stringify(x));
+		xhr.send(pokedex);
 	}
 	resetTurnsSinceMoved() {
 		this.turnsSinceMoved = 0;
