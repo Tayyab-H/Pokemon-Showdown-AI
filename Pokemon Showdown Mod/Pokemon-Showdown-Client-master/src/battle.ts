@@ -33,7 +33,6 @@ type WeatherState = [string, number, number];
 type EffectTable = {[effectid: string]: EffectState};
 type HPColor = 'r' | 'y' | 'g';
 //import XMLHttpRequest from 'w3c-xmlhttprequest';
-const pokedex = require("./pokedex");
 class Pokemon implements PokemonDetails, PokemonHealth {
 
 	name = '';
@@ -1276,17 +1275,32 @@ class Battle {
 		let enemyPokemonList = this.yourSide.pokemon;
 		let x = [];
 		//@ts-ignore
+		let move1;
+		let move2;
+		let move3;
+		let move4;
+		//@ts-ignore
 		for (let i = 0; i < PokemonList.length; i++){
 			//@ts-ignore
-			x.push({name: PokemonList[i].ident, moves: PokemonList[i].moves, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active});
+
+			move1 = Dex.getMove(PokemonList[i].moves[0]);
+			//@ts-ignore
+			move2 = Dex.getMove(PokemonList[i].moves[1]);
+			//@ts-ignore
+			move3 = Dex.getMove(PokemonList[i].moves[2]);
+			//@ts-ignore
+			move4 = Dex.getMove(PokemonList[i].moves[3]);
+			//@ts-ignore
+			x.push({type: Dex.getTemplate(PokemonList[i].name).types,stats:Dex.getTemplate(PokemonList[i].name).baseStats, move1: move1, move2: move2, move3: move3, move4: move4, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:PokemonList[i].status});
 		}
 
 		for (let i = 0; i < enemyPokemonList.length; i++){
-			x.push({name: enemyPokemonList[i].ident, moves: enemyPokemonList[i].moves, hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
+			x.push({type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
 		}
 		// @ts-ignore
-		//xhr.send(JSON.stringify(x));
-		xhr.send(pokedex);
+		xhr.send(JSON.stringify(x));
+
+
 	}
 	resetTurnsSinceMoved() {
 		this.turnsSinceMoved = 0;

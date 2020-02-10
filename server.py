@@ -1,7 +1,13 @@
 from flask import Flask, request
 import requests
+import json
+import gym
 
 app = Flask(__name__)
+
+def createGameState(data):
+	#json.load(data)
+	x = json.loads(data.decode('utf-8'))
 
 
 @app.route("/")
@@ -23,5 +29,3 @@ if __name__ == "__main__":
 
 
 
-def createGameState(data):
-	pass
