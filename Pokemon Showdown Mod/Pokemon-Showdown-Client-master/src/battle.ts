@@ -1291,11 +1291,11 @@ class Battle {
 			//@ts-ignore
 			move4 = Dex.getMove(PokemonList[i].moves[3]);
 			//@ts-ignore
-			x.push({type: Dex.getTemplate(PokemonList[i].name).types,stats:Dex.getTemplate(PokemonList[i].name).baseStats, move1: move1, move2: move2, move3: move3, move4: move4, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:PokemonList[i].status});
+			x.push({species:Dex.getTemplate(PokemonList[i]).species, type: Dex.getTemplate(PokemonList[i].name).types,stats:Dex.getTemplate(PokemonList[i].name).baseStats, move1: move1, move2: move2, move3: move3, move4: move4, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:PokemonList[i].status});
 		}
 
 		for (let i = 0; i < enemyPokemonList.length; i++){
-			x.push({type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
+			x.push({species:enemyPokemonList[i].getTemplate().species, type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
 		}
 		// @ts-ignore
 		xhr.send(JSON.stringify(x));

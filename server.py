@@ -22,7 +22,9 @@ def get_post():
 	data = 'Please Change This'
 	if request.method == 'POST':
 		data = request.data
+		#data = json.load(data)
 		print(data)
+		#open("gamestate.pickle", 'w').close()
 		with open("gamestate.pickle","wb") as f:
 			pickle.dump(data, f)
 		return data

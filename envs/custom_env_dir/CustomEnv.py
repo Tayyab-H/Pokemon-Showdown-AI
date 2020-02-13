@@ -2,6 +2,8 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 import random
+import numpy as np
+import json
 from Agent import Agent
 
 
@@ -60,5 +62,11 @@ class PokemonEnv(gym.Env):
 
     def getGamestate(self):
         x = self.player.getGameState()
-        print("Pickled : " , x)
-        return x
+        x.decode('utf-8')
+        x = json.loads(x)
+        ar = []
+        for i in range(0,len(x)):
+           ar.append(x[i]["species"])
+        print(np.array(ar))
+
+

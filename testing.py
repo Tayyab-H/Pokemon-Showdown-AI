@@ -4,5 +4,7 @@ from envs.custom_env_dir.CustomEnv import PokemonEnv
 
 env = PokemonEnv()
 while True:
+    env.getGamestate()
     env.step()
-    print("Gamestate is : ", env.getGamestate())
+    env.getGamestate()
+
