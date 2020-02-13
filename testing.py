@@ -1,9 +1,8 @@
-from DataSetLoader import statsDataSet
-from DataSetLoader import ReplaysDataSet
-import csv
+from Agent import Agent
+import json
+from envs.custom_env_dir.CustomEnv import PokemonEnv
 
-s = statsDataSet("statsDataset.csv")
-x, y = s.__getitem__(0)
-print(x)
-
-
+env = PokemonEnv()
+while True:
+    env.step()
+    print("Gamestate is : ", env.getGamestate())
