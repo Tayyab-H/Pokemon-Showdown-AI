@@ -67,6 +67,14 @@ class PokemonEnv(gym.Env):
         ar = []
         for i in range(0,len(x)):
            ar.append(x[i]["species"])
-        print(np.array(ar))
+        if len(ar) < 12:
+            for i in range(12-len(ar)):
+                ar.append(0)
+        else:
+            pass
+        pokemonids = np.array(ar)
+
+
+
 
 
