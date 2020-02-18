@@ -1091,7 +1091,62 @@ class Battle {
 
 		this.init();
 	}
+	sendGameState(){
+		if(this.myPokemon === null||this.myPokemon === []){
+			return;
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", 'http://127.0.0.1/postmethod', true);
+		xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
+		// @ts-ignore
+		let PokemonList = this.myPokemon;
+		let enemyPokemonList = this.yourSide.pokemon;
+		let p = this.mySide.pokemon
+		let x = [];
+		//@ts-ignore
+		let move1;
+		let move2;
+		let move3;
+		let move4;
+		//@ts-ignore
+		// @ts-ignore
+		for (let i = 0; i < PokemonList.length; i++){
+			// @ts-ignore
+			var status = PokemonList[i].status
+			// @ts-ignore
+			if (PokemonList[i].status === null ||PokemonList[i].status === ""||PokemonList[i].status === undefined){
+				status = ""
+			}
+			let boosts = null
+			if (p[i] === undefined){
+				boosts = {}
+			}
+			else {
+				boosts = p[i].boosts
+			}
 
+			// @ts-ignore
+			move1 = Dex.getMove(PokemonList[i].moves[0]);
+			//@ts-ignore
+			move2 = Dex.getMove(PokemonList[i].moves[1]);
+			//@ts-ignore
+			move3 = Dex.getMove(PokemonList[i].moves[2]);
+			//@ts-ignore
+			move4 = Dex.getMove(PokemonList[i].moves[3]);
+			//@ts-ignore
+			x.push({species:Dex.getTemplate(PokemonList[i].species).num, type: Dex.getTemplate(PokemonList[i].species).types,stats:Dex.getTemplate(PokemonList[i].species).baseStats, move1: move1.id, move2: move2.id, move3: move3.id, move4: move4.id, move1Type:move1.type,move2Type:move2.type,move3Type:move3.type,move4Type:move4.type,move1power:move1.basePower,move2power:move2.basePower,move3power:move3.basePower,move4power:move4.basePower, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:status, boosts: boosts, fainted:PokemonList[i].fainted});
+		}
+
+		for (let i = 0; i < enemyPokemonList.length; i++){
+			var status = enemyPokemonList[i].status
+			if (enemyPokemonList[i].status === null ||enemyPokemonList[i].status === ""||enemyPokemonList[i].status === undefined){
+				status = ""
+			}
+			x.push({species:enemyPokemonList[i].getTemplate().num, type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive(), move1: enemyPokemonList[i].moveTrack[0], move2: enemyPokemonList[i].moveTrack[1], move3: enemyPokemonList[i].moveTrack[2], move4: enemyPokemonList[i].moveTrack[3], statusEffect: status, boosts: enemyPokemonList[i].boosts, fainted: enemyPokemonList[i].fainted});
+		}
+		// @ts-ignore
+		xhr.send(JSON.stringify(x));
+	}
 	removePseudoWeather(weather: string) {
 		for (let i = 0; i < this.pseudoWeather.length; i++) {
 			if (this.pseudoWeather[i][0] === weather) {
@@ -1266,40 +1321,6 @@ class Battle {
 		}
 
 		if (this.turnCallback) this.turnCallback(this);
-
-		var xhr = new XMLHttpRequest();
-		xhr.open("POST", 'http://127.0.0.1/postmethod', true);
-		xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
-		// @ts-ignore
-		let PokemonList = this.myPokemon;
-		let enemyPokemonList = this.yourSide.pokemon;
-		let x = [];
-		//@ts-ignore
-		let move1;
-		let move2;
-		let move3;
-		let move4;
-		//@ts-ignore
-		// @ts-ignore
-		for (let i = 0; i < PokemonList.length; i++){
-			// @ts-ignore
-			move1 = Dex.getMove(PokemonList[i].moves[0]);
-			//@ts-ignore
-			move2 = Dex.getMove(PokemonList[i].moves[1]);
-			//@ts-ignore
-			move3 = Dex.getMove(PokemonList[i].moves[2]);
-			//@ts-ignore
-			move4 = Dex.getMove(PokemonList[i].moves[3]);
-			//@ts-ignore
-			x.push({species:Dex.getTemplate(PokemonList[i].species).num, type: Dex.getTemplate(PokemonList[i].name).types,stats:Dex.getTemplate(PokemonList[i].name).baseStats, move1: move1, move2: move2, move3: move3, move4: move4, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:PokemonList[i].status});
-		}
-
-		for (let i = 0; i < enemyPokemonList.length; i++){
-			x.push({species:enemyPokemonList[i].getTemplate().num, type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
-		}
-		// @ts-ignore
-		xhr.send(JSON.stringify(x));
-
 
 	}
 	resetTurnsSinceMoved() {
@@ -2864,6 +2885,7 @@ class Battle {
 			throw new Error(`Unrecognized minor action: ${args[0]}`);
 			break;
 		}}
+		this.sendGameState();
 	}
 	/*
 	parseSpriteData(name) {
@@ -3363,38 +3385,6 @@ class Battle {
 				poke.side.dragIn(poke);
 			}
 			this.log(args, kwArgs);
-				var xhr = new XMLHttpRequest();
-				xhr.open("POST", 'http://127.0.0.1/postmethod', true);
-				xhr.setRequestHeader('Content-Type', 'text/plain; charset=utf-8');
-				// @ts-ignore
-				let PokemonList = this.myPokemon;
-				let enemyPokemonList = this.yourSide.pokemon;
-				let x = [];
-				//@ts-ignore
-				let move1;
-				let move2;
-				let move3;
-				let move4;
-				//@ts-ignore
-				for (let i = 0; i < PokemonList.length; i++){
-					//@ts-ignore
-
-					move1 = Dex.getMove(PokemonList[i].moves[0]);
-					//@ts-ignore
-					move2 = Dex.getMove(PokemonList[i].moves[1]);
-					//@ts-ignore
-					move3 = Dex.getMove(PokemonList[i].moves[2]);
-					//@ts-ignore
-					move4 = Dex.getMove(PokemonList[i].moves[3]);
-					//@ts-ignore
-					x.push({species:Dex.getTemplate(PokemonList[i].species).num, type: Dex.getTemplate(PokemonList[i].name).types,stats:Dex.getTemplate(PokemonList[i].name).baseStats, move1: move1, move2: move2, move3: move3, move4: move4, hp:PokemonList[i].hp/PokemonList[i].maxhp,isActive: PokemonList[i].active,statusEffect:PokemonList[i].status});
-				}
-
-				for (let i = 0; i < enemyPokemonList.length; i++){
-					x.push({species:enemyPokemonList[i].getTemplate().num, type: enemyPokemonList[i].getTemplate().types,stats: enemyPokemonList[i].getTemplate().baseStats , hp:enemyPokemonList[i].hp/enemyPokemonList[i].maxhp, isActive: enemyPokemonList[i].isActive()});
-				}
-				// @ts-ignore
-				xhr.send(JSON.stringify(x));
 			break;
 		}
 		case 'faint': {
@@ -3467,6 +3457,7 @@ class Battle {
 			this.log(args, kwArgs, preempt);
 			break;
 		}}
+		this.sendGameState();
 	}
 
 	run(str: string, preempt?: boolean) {
