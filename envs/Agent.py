@@ -16,6 +16,7 @@ class Agent:
         self.moveMemory = {}
         self.isGameStarted = False
         self.switch = False
+        self.reward = 0
 
     def login(self):
         self.ws = websocket.WebSocket()
@@ -80,7 +81,25 @@ class Agent:
                 # print(x)
                 self.gameState = x
             elif "faint|p1" in x:
+                self.reward = self.reward - 10
                 self.switch = True
+            if "-damage|p2" in x or ("-boost|p1" in x and "faint|p1" not in x):
+                self.reward = self.reward + 2
+            if "faint|p2" in x:
+                self.reward = self.reward + 10
+            if "-supereffective|p2" in x:
+                self.reward = self.reward + 4
+            if "-supereffective|p1" in x:
+                self.reward = self.reward - 4
+            if "-resisted|p1" in x:
+                self.reward = self.reward + 4
+            if "-resisted|p2" in x:
+                self.reward = self.reward - 4
+            if "|-immune|p1" in x:
+                self.reward = self.reward + 5
+            if "win|rlshowdownbot" in x:
+                pass
+#                self.reward = self.reward + 20
 
     def getGameState(self):
         time.sleep(2)

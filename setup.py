@@ -1,2 +1,6 @@
 from setuptools import setup
-setup(name="Pokemon-Showdown-AI", version="0.1",install_requires=["gym"])
+
+setup(name='envs',
+      version='0.0.1',
+      install_requires=['gym']#And any other dependencies required
+)
