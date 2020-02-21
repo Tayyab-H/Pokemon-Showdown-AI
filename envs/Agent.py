@@ -7,6 +7,7 @@ from queue import Queue
 import pickle
 import time
 
+
 class Agent:
     def __init__(self):
         self.login()
@@ -17,6 +18,7 @@ class Agent:
         self.isGameStarted = False
         self.switch = False
         self.reward = 0
+        self.isDone = False
 
     def login(self):
         self.ws = websocket.WebSocket()
@@ -40,13 +42,13 @@ class Agent:
         print(self.ws.recv())
         print(self.ws.recv())
         print(self.ws.recv())
+        t = threading.Thread(target=self.getResponse)
+        t.start()
 
     def __battle(self, x):
         print("Battle Started with string: \n" + x)
 
     def challenge(self, name):
-        t = threading.Thread(target=self.getResponse)
-        t.start()
         self.ws.send("|/challenge " + name + ", gen8randombattle")
         x = "initial string"
         while x != "":
@@ -61,15 +63,15 @@ class Agent:
         self.isGameStarted = True
         return room
 
-    def randomMove(self, currentRoom, move):
+    def move(self, currentRoom, move):
         x = self.q.get()
         if "turn" in x or "invalid" in x or "Invalid" in x:
             self.ws.send(str(currentRoom) + str(move))
+            self.reward -= 1
         elif "faint|p1" in x:
             self.ws.send(str(currentRoom) + str(move))
         else:
             pass
-
 
     def getResponse(self):
         while True:
@@ -99,7 +101,8 @@ class Agent:
                 self.reward = self.reward + 5
             if "win|rlshowdownbot" in x:
                 pass
-#                self.reward = self.reward + 20
+
+    #                self.reward = self.reward + 20
 
     def getGameState(self):
         time.sleep(2)
