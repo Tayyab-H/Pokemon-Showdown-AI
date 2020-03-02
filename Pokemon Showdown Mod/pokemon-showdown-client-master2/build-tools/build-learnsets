@@ -1,0 +1,194 @@
+#!/usr/bin/env node
+
+/**
+ * This script parses index.html and sets the version query string of each
+ * resource to be the MD5 hash of that resource.
+ * It also updates news and the learnsets-g6.js file.
+ *
+ * On the live web server, this script is set as the following git hooks:
+ *   post-commit, post-checkout, post-merge, post-rewrite
+ */
+
+"use strict";
+
+const path = require('path');
+const fs = require('fs');
+
+const thisFile = __filename;
+const thisDir = __dirname;
+const rootDir = path.resolve(thisDir, '..');
+
+const Dex = require('../data/Pokemon-Showdown/.sim-dist/dex').Dex;
+const toID = Dex.getId;
+
+function updateLearnsets(callback) {
+	const reservedKeywords = ['return']; // `return` is the only ES3+ reserved keyword that (currently) raises conflicts
+	const numberRegExp = new RegExp('^[0-9]*');
+	const reservedRegExp = new RegExp('^(' + reservedKeywords.join('|') + '|\\d.*)$', 'g');
+	const alphabetize = (a, b) => a.localeCompare(b);
+	const getLsetGen = lset => lset.charAt(0);
+
+	const padNumString = str => str.padStart(3, '0');
+	const inLearnset = function (lset, learnset) {
+		const secondChar = lset.charAt(1);
+		if (secondChar !== 'L') return learnset.indexOf(lset) >= 0;
+
+		const firstFragment = lset.substr(0, 2);
+		const levelFragment = lset.substring(2, 5);
+		const paddedLevel = padNumString(levelFragment);
+		for (let i = 0, len = learnset.length; i < len; i++) {
+			if (learnset[i].substring(0, 2) !== firstFragment) continue;
+			// ignore PSdex starter moves sorting data
+			if (paddedLevel === padNumString(learnset[i].substring(2, 5))) return true;
+		}
+		return false;
+	};
+	const formatLset = function (lset) {
+		const secondChar = lset.charAt(1);
+		if (secondChar !== 'L') return lset;
+		const firstFragment = lset.substr(0, 2);
+		const levelFragment = lset.substr(2).match(numberRegExp)[0];
+		const sortFragment = lset.substr(2 + levelFragment.length);
+		return firstFragment + padNumString(levelFragment) + sortFragment;
+	};
+
+	const Pokedex = Dex.data.Pokedex;
+	const Learnsets = Dex.data.Learnsets;
+	const newLearnsetsG6 = {};
+
+	let oldLearnsetsG6;
+	try {
+		oldLearnsetsG6 = require(path.join(rootDir, 'data', 'learnsets-g6.js')).BattleLearnsets;
+	} catch (err) {
+		if (err.code !== 'MODULE_NOT_FOUND') return callback(err);
+		oldLearnsetsG6 = {};
+	}
+
+	for (const speciesid in Learnsets) {
+		if (!oldLearnsetsG6[speciesid] || !oldLearnsetsG6[speciesid].learnset) {
+			if (!Pokedex[speciesid] && speciesid !== 'rockruffdusk') console.log("ERROR: " + speciesid + " not found in Pokedex");
+			console.log("NEW ENTRY at learnsets-g6.js: " + speciesid + ".");
+			oldLearnsetsG6[speciesid] = {learnset: {}};
+		}
+	}
+	for (const speciesid in oldLearnsetsG6) {
+		if (!oldLearnsetsG6[speciesid] || !oldLearnsetsG6[speciesid].learnset) return callback(new TypeError("Invalid `learnsets-g6.js` entry for " + speciesid + "."));
+		if (!Learnsets[speciesid]) {
+			console.log("REMOVED ENTRY at learnsets-g6.js: " + (Pokedex[speciesid] ? Pokedex[speciesid].species : speciesid) + ".");
+			continue;
+		}
+		const newLearnset = {};
+		const oldLearnset = oldLearnsetsG6[speciesid].learnset;
+		const fullLearnset = Learnsets[speciesid].learnset;
+		if (!fullLearnset) return callback(new TypeError("Invalid data at `learnsets.js` for " + speciesid + "."));
+
+		// copy, but ignore moves removed in main file
+		for (const moveid in oldLearnset) {
+			if (!Array.isArray(oldLearnset[moveid])) return callback(new TypeError("Invalid data at `learnsets-g6.js` for " + speciesid + ":" + moveid + "."));
+			if (!fullLearnset[moveid]) continue;
+			newLearnset[moveid] = [];
+			for (let i = 0, len = oldLearnset[moveid].length; i < len; i++) {
+				if (!inLearnset(oldLearnset[moveid][i], fullLearnset[moveid])) continue;
+				newLearnset[moveid].push(oldLearnset[moveid][i]);
+			}
+		}
+
+		for (const moveid in fullLearnset) {
+			if (!Array.isArray(fullLearnset[moveid])) return callback(new TypeError("Invalid data at `learnsets.js` for " + speciesid + ":" + moveid + "."));
+
+			if (!newLearnset[moveid]) newLearnset[moveid] = [];
+			newLearnset[moveid] = newLearnset[moveid].map(formatLset);
+			for (let i = 0, len = fullLearnset[moveid].length; i < len; i++) {
+				if (getLsetGen(fullLearnset[moveid][i]) !== '8') continue;
+				if (inLearnset(fullLearnset[moveid][i], newLearnset[moveid])) continue;
+				newLearnset[moveid].push(formatLset(fullLearnset[moveid][i]));
+			}
+			newLearnset[moveid].sort(alphabetize);
+		}
+
+		newLearnsetsG6[speciesid] = {learnset: newLearnset};
+	}
+
+	const buf = [];
+	const pokemonList = Object.keys(Pokedex).map(speciesId => Pokedex[speciesId]).sort(function (a, b) {
+		// Missingno. goes first (zeroth); afterwards, CAP in descending dex order (increasingly negative)
+		// Finally, standard Pokémon in ascending dex order
+		if (a.num <= 0 && b.num > 0) return -1;
+		if (b.num <= 0 && a.num > 0) return 1;
+		if (a.num <= 0 && b.num <= 0) return b.num - a.num;
+		return a.num - b.num;
+	}).map(template => toID(template.species));
+
+	for (let i = 0, len = pokemonList.length; i < len; i++) {
+		const entry = newLearnsetsG6[pokemonList[i]];
+		if (!entry || !entry.learnset) continue;
+		const lsetSerialized = '{' + Object.keys(entry.learnset).sort(alphabetize).map(function (moveid) {
+			return moveid.replace(reservedRegExp, '"$1"') + ':' + JSON.stringify(entry.learnset[moveid]);
+		}).join(',') + '}';
+		buf.push(pokemonList[i] + ':{learnset:' + lsetSerialized + '}');
+	}
+
+	const writeStream = fs.createWriteStream(path.join(rootDir, 'data', 'learnsets-g6.js')).on('error', callback);
+	writeStream.write('exports.BattleLearnsets = {\n\t' + buf.join(',\n\t') + '\n};\n');
+	writeStream.end(callback);
+}
+
+let indexStats, updateStats, indexMTime, updateMTime;
+try {
+	indexStats = fs.statSync(path.join(rootDir, 'index.html'));
+	indexMTime = indexStats.mtime.getTime();
+} catch (err) {
+	if (err.code !== 'ENOENT') throw err;
+	// It doesn't exist currently, but it will by the end of the script execution.
+	// Any other error is unacceptable and will throw.
+}
+try {
+	updateStats = fs.statSync(thisFile);
+	updateMTime = updateStats.mtime.getTime();
+} catch (err) {
+	throw err; // !!
+}
+
+// update learnsets-g6
+process.stdout.write("Updating file `data/learnsets-g6`... ");
+
+let learnsetsStats;
+let learnsetsG6Stats;
+let learnsetsG6ToUpdate = true;
+
+try {
+	learnsetsStats = fs.statSync(path.join(rootDir, 'data', 'learnsets.js'));
+} catch (err) {
+	// Couldn't find learnsets.js, but that's not the end of the world: skip to next task.
+	console.error("Couldn't find `data/learnsets.js`. Task aborted.");
+	learnsetsG6ToUpdate = false;
+}
+if (learnsetsG6ToUpdate) {
+	try {
+		learnsetsG6Stats = fs.statSync(path.join(rootDir, 'data', 'learnsets-g6.js'));
+	} catch (err) {
+		if (err.code === 'ENOENT') {
+			// It doesn't exist currently, but it will by the end of the script execution.
+		} else {
+			// Any other error is unacceptable for learnsets-g6.js update: skip to next task.
+			console.error("Failed to read `data/learnsets-g6.js`. Task aborted.");
+			learnsetsG6ToUpdate = false;
+		}
+	}
+}
+
+if (learnsetsG6ToUpdate && (!indexStats || !learnsetsG6Stats || indexMTime < updateMTime || indexMTime < learnsetsStats.mtime.getTime() || indexMTime < learnsetsG6Stats.mtime.getTime())) {
+	// Only merge learnsets.js with learnsets-g6.js if any of those files, or this one, have been modified recently (or if we don't know what "recently" means)
+
+	updateLearnsets(function (err) {
+		if (err) {
+			let stack = err.stack || '';
+			stack = "File `data/learnsets-g6` failed to update.\n" + stack;
+			console.error(stack);
+		} else {
+			console.log("DONE");
+		}
+	});
+} else {
+	console.log("CACHED");
+}

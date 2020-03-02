@@ -210,6 +210,7 @@
 				} else if (logLine.substr(0, 5) === '|win|' || logLine === '|tie') {
 					this.battleEnded = true;
 					this.battle.activityQueue.push(logLine);
+					this.close();
 				} else if (logLine.substr(0, 6) === '|chat|' || logLine.substr(0, 3) === '|c|' || logLine.substr(0, 4) === '|c:|' || logLine.substr(0, 9) === '|chatmsg|' || logLine.substr(0, 10) === '|inactive|') {
 					this.battle.instantAdd(logLine);
 				} else {

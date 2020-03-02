@@ -19,6 +19,7 @@ class Agent:
         self.switch = False
         self.reward = 0
         self.isDone = False
+        self.close = False
 
     def login(self):
         self.ws = websocket.WebSocket()
@@ -54,9 +55,9 @@ class Agent:
         while x != "":
             x = self.q.get()
             x = x.split("\n")
-            x = x[0]
-            # print(x)
-            if ">" in x:
+            #print(x)
+            if ">" in x[0] and "init|" in x[1]:
+                x = x[0]
                 room = x[1:]
                 break
         self.__battle(x)
@@ -64,23 +65,26 @@ class Agent:
         return room
 
     def move(self, currentRoom, move):
-        x = self.q.get()
-        if "turn" in x or "invalid" in x or "Invalid" in x:
+        x = str(self.q.get())
+        if x.__contains__("turn|"):
             self.ws.send(str(currentRoom) + str(move))
-            self.reward -= 1
-        elif "faint|p1" in x:
+        if "invalid" in x or "Invalid" in x or "Unavailable" in x:
+            self.ws.send(str(currentRoom) + str(move))
+            self.reward -= 5
+        elif "faint|" in x:
             self.ws.send(str(currentRoom) + str(move))
         else:
-            pass
+            while "faint|" not in x and "invalid" not in x and "Invalid" not in x and "turn|" not in x and "Unavailable" not in x and '{"forceSwitch":[true]' not in x:
+                x = str(self.q.get())
+            self.ws.send(str(currentRoom) + str(move))
+
 
     def getResponse(self):
         while True:
             x = self.ws.recv()
-            print(x)
             self.q.put(x)
             if "|request|" in x and "{" in x:
                 x = x[x.find("{"):x.rfind("}") + 1]
-                # print(x)
                 self.gameState = x
             elif "faint|p1" in x:
                 self.reward = self.reward - 10
@@ -88,7 +92,7 @@ class Agent:
             if "-damage|p2" in x or ("-boost|p1" in x and "faint|p1" not in x):
                 self.reward = self.reward + 2
             if "faint|p2" in x:
-                self.reward = self.reward + 10
+                self.reward = self.reward + 50
             if "-supereffective|p2" in x:
                 self.reward = self.reward + 4
             if "-supereffective|p1" in x:
@@ -99,13 +103,26 @@ class Agent:
                 self.reward = self.reward - 4
             if "|-immune|p1" in x:
                 self.reward = self.reward + 5
-            if "win|rlshowdownbot" in x:
-                pass
-
-    #                self.reward = self.reward + 20
+            if "win|RLShowdownBot" in x:
+                self.reward += 200
+                self.isDone = True
+            if "win|" in x and "RLShowdownBot" not in x:
+                self.reward -= 100
+                self.isDone = True
+            if "Unavailable choice" in x:
+                self.reward -= 5
 
     def getGameState(self):
-        time.sleep(2)
-        with open("gamestate.pickle", "rb") as file:
-            g = pickle.load(file)
-        return g
+        if self.close:
+            return
+        time.sleep(1)
+        try:
+            with open("gamestate.pickle", "rb") as file:
+                g = pickle.load(file)
+            return g
+        except EOFError:
+            time.sleep(0.5)
+            g = self.getGameState()
+            print("CAUGHT")
+            return g
+

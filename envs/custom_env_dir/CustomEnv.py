@@ -8,6 +8,7 @@ from envs.Agent import Agent
 from envs.utils import Utils as u
 import torch
 
+
 class PokemonEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
@@ -16,17 +17,17 @@ class PokemonEnv(gym.Env):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.action_space = spaces.Discrete(13)
         self.action_space = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        self.observation_space = gym.spaces.Box(high=1, low=-1, shape=(264,1))
+        self.observation_space = np.zeros(shape=(264, 1), dtype=np.float)
+        self.observation_space = torch.from_numpy(self.observation_space)
         self.player = Agent()
         self.room = ""
         self.reward = 0
         self.isDone = False
-        self.reset()
 
     def step(self, move):
         self.action(move)
         self.getGamestate()
-        self.reward += self.player.reward
+        self.reward = self.player.reward
         self.player.reward = 0
         return self.observation_space, torch.tensor([self.reward]), self.isDone
 
@@ -55,8 +56,13 @@ class PokemonEnv(gym.Env):
             self.player.move(self.room, "|/choose move 2 dynamax")
         elif choice == 11:
             self.player.move(self.room, "|/choose move 3 dynamax")
-        else:
+        elif choice == 12:
             self.player.move(self.room, "|/choose move 4 dynamax")
+        else:
+            pass
+
+        if self.player.isDone:
+            self.isDone = True
 
     def randomAction(self, choice):
         if self.player.switch:
@@ -86,12 +92,18 @@ class PokemonEnv(gym.Env):
             self.player.move(self.room, "|/choose move 2 dynamax")
         elif choice == 11:
             self.player.move(self.room, "|/choose move 3 dynamax")
-        else:
+        elif choice == 12:
             self.player.move(self.room, "|/choose move 4 dynamax")
+        else:
+            pass
 
     def reset(self):
-        self.room = self.player.challenge("TheDonOfDons")
+        if self.room != "":
+            self.player.ws.send(self.room + "|/leave")
+        self.room = self.player.challenge("RLShowdownTrainer")
         self.reward = 0
+        self.isDone = False
+        self.player.isDone = False
         while not self.player.isGameStarted:
             pass
 
@@ -219,5 +231,10 @@ class PokemonEnv(gym.Env):
         boosts = boosts.tolist()
         # print(boosts)
         obs = pokemonids + typesarray + hp + statusEffects + boosts + teammoves
-        obs = np.array([obs], dtype=np.float)
+        obs = np.array([obs], dtype="float")
+        obs = torch.from_numpy(obs)
         self.observation_space = obs
+
+    def closeClient(self):
+        self.player.close = True
+

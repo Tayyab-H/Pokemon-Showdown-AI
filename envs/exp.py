@@ -2,6 +2,7 @@ from collections import namedtuple
 import random
 import math
 import torch
+
 Experience = namedtuple(
     'Experience',
     ('state', 'action', 'nextState', 'reward')
@@ -43,6 +44,7 @@ class Player:
         self.strategy = strategy
         self.numOfActions = numOfActions
         self.currentStep = 0
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def selectAction(self, state, policyNetwork):
         rate = self.strategy.getExplorationRate(self.currentStep)
@@ -52,4 +54,16 @@ class Player:
             return random.randrange(self.numOfActions)
         else:
             with torch.no_grad():
+                state = state.float().to(self.device)
                 return policyNetwork(state).argmax(dim=1).item()
+
+
+class TensorExtraction:
+    @staticmethod
+    def extractTensor(experiencesObj):
+        batch = Experience(*zip(*experiencesObj))
+        t1 = torch.cat(batch.state)
+        t2 = torch.cat(batch.action)
+        t3 = torch.cat(batch.reward)
+        t4 = torch.cat(batch.nextState)
+        return t1, t2, t3, t4
