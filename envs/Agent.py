@@ -49,6 +49,7 @@ class Agent:
     def __battle(self, x):
         print("Battle Started with string: \n" + x)
 
+
     def challenge(self, name):
         self.ws.send("|/challenge " + name + ", gen8randombattle")
         x = "initial string"
@@ -63,6 +64,22 @@ class Agent:
         self.__battle(x)
         self.isGameStarted = True
         return room
+
+    def ladderChallenge(self):
+        self.ws.send("|/search " + "gen8randombattle")
+        x = "initial string"
+        while x != "":
+            x = self.q.get()
+            x = x.split("\n")
+            # print(x)
+            if ">" in x[0] and "init|" in x[1]:
+                x = x[0]
+                room = x[1:]
+                break
+        self.__battle(x)
+        self.isGameStarted = True
+        return room
+
 
     def move(self, currentRoom, move):
         x = str(self.q.get())

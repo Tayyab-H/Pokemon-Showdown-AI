@@ -18,7 +18,7 @@ epDecay = 0.00001
 targetUpdate = 1
 memorySize = 100000
 lr = 0.01
-numEpisodes = 100
+numEpisodes = 1000
 numActions = 13
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
