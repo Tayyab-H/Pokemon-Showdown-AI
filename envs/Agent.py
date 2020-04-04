@@ -75,6 +75,7 @@ class Agent:
             if ">" in x[0] and "init|" in x[1]:
                 x = x[0]
                 room = x[1:]
+                self.ws.send(room + "|/timer on")
                 break
         self.__battle(x)
         self.isGameStarted = True
@@ -99,6 +100,7 @@ class Agent:
     def getResponse(self):
         while True:
             x = self.ws.recv()
+            print(x)
             self.q.put(x)
             if "|request|" in x and "{" in x:
                 x = x[x.find("{"):x.rfind("}") + 1]
@@ -120,14 +122,18 @@ class Agent:
                 self.reward = self.reward - 4
             if "|-immune|p1" in x:
                 self.reward = self.reward + 5
-            if "win|RLShowdownBot" in x:
-                self.reward += 200
-                self.isDone = True
             if "win|" in x and "RLShowdownBot" not in x:
                 self.reward -= 100
                 self.isDone = True
+                print("lost")
             if "Unavailable choice" in x:
                 self.reward -= 5
+            if "win|RLShowdownBot" in x:
+                self.reward += 200
+                self.isDone = True
+                print("won")
+            if "lost due to inactivity" in x:
+                self.isDone = True
 
     def getGameState(self):
         if self.close:

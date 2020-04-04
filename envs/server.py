@@ -21,10 +21,14 @@ def main():
 @app.route('/postmethod', methods=['POST', 'GET'])
 def get_post():
     data = 'Please Change This'
+    array = []
     if request.method == 'POST':
         data = request.data
-        # data = json.load(data)
+        dataJSON = json.loads(data)
         print(data)
+        for i in range(len(dataJSON)):
+            current = dataJSON[i]
+            print(current["hp"])
         # open("gamestate.pickle", 'w').close()
         with open("gamestate.pickle", "wb") as f:
             pickle.dump(data, f)

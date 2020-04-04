@@ -32,6 +32,9 @@ class PokemonEnv(gym.Env):
         return self.observation_space, torch.tensor([self.reward]), self.isDone
 
     def action(self, choice):
+        if self.player.isDone:
+            self.isDone = True
+            return
         if choice == 0:
             self.player.move(self.room, "|/move 1")
         elif choice == 1:
@@ -60,9 +63,6 @@ class PokemonEnv(gym.Env):
             self.player.move(self.room, "|/choose move 4 dynamax")
         else:
             pass
-
-        if self.player.isDone:
-            self.isDone = True
 
     def randomAction(self, choice):
         if self.player.switch:
@@ -98,9 +98,9 @@ class PokemonEnv(gym.Env):
             pass
 
     def reset(self):
-        if self.room != "":
-            self.player.ws.send(self.room + "|/leave")
-        self.room = self.player.challenge("RLShowdownTrainer")
+        print("RESET")
+        self.room = self.player.challenge("TheDonOfDons")
+        #self.room = self.player.ladderChallenge()
         self.reward = 0
         self.isDone = False
         self.player.isDone = False
@@ -237,4 +237,3 @@ class PokemonEnv(gym.Env):
 
     def closeClient(self):
         self.player.close = True
-

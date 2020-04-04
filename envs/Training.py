@@ -18,7 +18,7 @@ epDecay = 0.00001
 targetUpdate = 1
 memorySize = 100000
 lr = 0.01
-numEpisodes = 1000
+numEpisodes = 2000
 numActions = 13
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -29,18 +29,30 @@ memory = ReplayMemory(memorySize)
 
 policyNetwork = DQN(264).to(device)
 targetNetwork = DQN(264).to(device)
+l = torch.load('policynet.pth')
+policyNetwork.load_state_dict(l['params'])
+policyNetwork.eval()
 targetNetwork.load_state_dict(policyNetwork.state_dict())
 targetNetwork.eval()
 optimiser = optim.Adam(params=policyNetwork.parameters(), lr=lr)
+currentEpisode = l['episode']
+currentStep = l['step']
 
-for episode in range(numEpisodes):
+
+
+
+for episode in range(currentEpisode, numEpisodes):
+    print("Start")
     env1.reset()
     env1.getGamestate()
     epReward = 0
     state = env1.observation_space
     state = state.to(device)
     for timestep in count():
-        action = player.selectAction(state=state, policyNetwork=policyNetwork)
+        if env1.isDone:
+            print("DONE")
+            break
+        action = player.selectAction(state=state, policyNetwork=policyNetwork, currentStep=currentStep)
         state = state.to("cpu")
         action = torch.from_numpy(np.array([action], dtype="float"))
         newState, reward, isDone = env1.step(action)
@@ -64,10 +76,14 @@ for episode in range(numEpisodes):
             loss.backward()
             optimiser.step()
         if env1.isDone:
+            print("DONE2")
             break
+    currentStep += 1
     plt.scatter(episode, epReward, c="g")
     if episode % targetUpdate == 0:
         targetNetwork.load_state_dict(policyNetwork.state_dict())
+    torch.save({'params': targetNetwork.state_dict(), 'step': currentStep, 'episode': episode}, "targetnet.pth")
+
 
 env1.closeClient()
 plt.show()

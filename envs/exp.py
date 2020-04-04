@@ -43,12 +43,10 @@ class Player:
     def __init__(self, strategy, numOfActions):
         self.strategy = strategy
         self.numOfActions = numOfActions
-        self.currentStep = 0
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def selectAction(self, state, policyNetwork):
-        rate = self.strategy.getExplorationRate(self.currentStep)
-        self.currentStep += 1
+    def selectAction(self, state, policyNetwork, currentStep):
+        rate = self.strategy.getExplorationRate(currentStep)
 
         if rate > random.random():
             return random.randrange(self.numOfActions)
