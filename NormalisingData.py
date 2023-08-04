@@ -3,6 +3,9 @@ import torch
 import os
 import sys
 import csv
+
+# Normalises the data in dataset.csv and writes it to Ndataset.csv
+
 xy = np.genfromtxt("dataset.csv", delimiter=',', dtype=np.float32)
 length = len(xy)
 string = ""

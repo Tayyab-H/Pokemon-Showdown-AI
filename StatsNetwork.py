@@ -5,6 +5,10 @@ from DataSetLoader import statsDataSet
 import matplotlib.pyplot as plt
 import torch
 
+# This is used for evaluation. This network takes all of the replay data
+# It uses the dataset to pick which player will win based on the team of pokemon alone
+# It gives a win prediction score
+
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()

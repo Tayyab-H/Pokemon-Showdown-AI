@@ -5,6 +5,7 @@ from DataSetLoader import ReplaysDataSet
 import matplotlib.pyplot as plt
 import torch
 
+# Creates the Neural Network 
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
@@ -25,6 +26,7 @@ class Model(nn.Module):
     def get_num_correct(self,preds,labels):
         return preds.round().squeeze().eq(labels).numpy().sum()
 
+# Trains the Neural Network
 class Test():
         model = Model()
         optimiser = torch.optim.Adam(model.parameters(), lr=0.0001)

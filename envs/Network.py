@@ -3,7 +3,7 @@ from torch import nn
 import torch.nn.functional as F
 from torch import tensor as te
 
-
+# Deep Q Network
 class DQN(nn.Module):
     def __init__(self, inFeatures):
         super().__init__()

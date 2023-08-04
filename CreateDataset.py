@@ -1,8 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import lxml
 
-
+# Parses a replay's HTML file and creates a dataset record from it and appends it to a CSV file
 def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-999570770"):
     print(link)
     result = requests.get(link)
@@ -37,7 +38,7 @@ def createDataset(link="https://replay.pokemonshowdown.com/gen7ou-999570770"):
                 p2[i] = string
             else:
                 pass
-
+            
     dex1 = []
     dex2 = []
     print(src)
@@ -83,6 +84,7 @@ with open("Dex.csv", "r") as f:
         pokemonName = row[1]
         pokemonId.append(id)
         pokemonList.append(pokemonName)
+
 
 i = 0
 file = "Replays5.html"

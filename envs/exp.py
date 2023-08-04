@@ -3,6 +3,8 @@ import random
 import math
 import torch
 
+
+# This is the experience that is stored in memory
 Experience = namedtuple(
     'Experience',
     ('state', 'action', 'nextState', 'reward')

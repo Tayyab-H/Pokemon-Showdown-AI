@@ -1,5 +1,6 @@
 import pickle
 
+#Enums that are used in the data set to represent the different types and status effects
 
 class Utils:
     typeid = {"0": 0, "normal": 1, "water": 2, "fire": 3, "bug": 4, "dark": 5, "dragon": 6, "electric": 7, "fairy": 8,

@@ -5,13 +5,13 @@ import gym
 import multiprocessing
 import pickle
 
+#hosts a server that can be used to send data to the model from the pokemon showdown client
 app = Flask(__name__)
 
 
 def createGameState(data):
     # json.load(data)
     x = json.loads(data.decode('utf-8'))
-
 
 @app.route("/")
 def main():
